@@ -1,0 +1,130 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Triptype;
+use Auth;
+
+class TripController extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    
+    public function index()
+    {
+        return view('admin.trip_type.list');
+    }
+
+/***************************************
+   Date        : 01/07/2024
+   Description :  list for triptype
+***************************************/    
+	public function get_triptype_list(Request $request)
+	{
+	    if ($request->ajax()) 
+	    {
+	        $pageNumber = ($request->start / $request->length) + 1;
+	        $pageLength = $request->length;
+	        $skip = ($pageNumber - 1) * $pageLength;
+
+	        $orderColumnIndex = $request->order[0]['column'] ?? 0;
+	        $orderBy = $request->order[0]['dir'] ?? 'desc';
+	        $searchValue = $request->search['value'] ?? '';
+	        $columns = [
+	            'TripTypeID',
+	            'created_at',
+	            'TripTypeName',
+	            'Status'
+	        ];
+	        $orderColumn = $columns[$orderColumnIndex] ?? 'TripTypeID';
+	        
+	        $query = Triptype::where('Status','1')
+	                        ->where(function($q) use ($searchValue) {
+                           $q->where('TripTypeName', 'like', '%'.$searchValue.'%');
+                       })
+                       ->orderBy($orderColumn, $orderBy);
+
+	        $recordsTotal = $query->count();
+	        $data = $query->skip($skip)->take($pageLength)->get();
+	        $recordsFiltered = $recordsTotal;
+
+	        $formattedData = $data->map(function($row) 
+	        {
+	            return [
+	                'TripTypeID' => $row->TripTypeID,
+	                'TripTypeName' => $row->TripTypeName,
+	                'action' => '<a href="' . route('view_triptype', $row->TripTypeID) .'"><i class="fa fa-eye button_orange" aria-hidden="true"></i></a><a href="' . route('edit_triptype', $row->TripTypeID) .'"><i class="fa fa-pencil-square-o button_orange" aria-hidden="true"></i></a><a onclick="delete_triptype_modal(\'' . $row->TripTypeID . '\')"><i class="fa fa-trash button_orange" aria-hidden="true"></i></a>',
+	                'checkbox' => '<input type="checkbox" name="item_checkbox[]" value="' . $row->TripTypeID . '">',
+	                'Status' => $row->Status, 
+	            ];
+	        });
+
+	        return response()->json([
+	            "draw" => $request->draw,
+	            "recordsTotal" => $recordsTotal,
+	            "recordsFiltered" => $recordsFiltered,
+	            'data' => $formattedData
+	        ], 200);
+	    }
+	}
+
+
+    public function add_triptype()
+    {
+    	return view('admin.trip_type.add');
+    }
+    
+    public function submit(Request $req)
+    {
+		$validatedData = $req->validate([
+			'triptype' => 'required',
+
+		], [
+			'triptype.required' => 'Please enter the trip type.',
+		]);
+		$userData=Triptype::create([
+			'TripTypeName'=>$req->triptype,
+			'user_id'=>Auth::user()->id,
+			'Status'=>'1',
+		]); 
+		return redirect()->route('trip_type_mgmt')->with('message','Triptype Added Successfully!');
+    }
+
+    public function view_triptype($id)
+    {
+    	$data=Triptype::where('TripTypeID', $id)->first();
+    	return view('admin.trip_type.view',compact('data'));
+    }
+
+    public function edit_triptype($id)
+    {
+      $triptype=Triptype::where('TripTypeID',$id)->first();
+      return view('admin.trip_type.edit',compact('triptype'));
+    }
+    public function update_triptype_submit(Request $req)
+    { 
+        Triptype::where('TripTypeID',$req->id)->update([
+          'TripTypeName'=>$req->triptype,
+          'user_id'=>Auth::user()->id,
+          'Status'=>$req->Status,
+        ]);
+        return redirect()->route('trip_type_mgmt')->with('message','Triptype updated Successfully!');
+    }
+
+    public function delete_triptype($id)
+    {
+        Triptype::where('TripTypeID', $id)->update(['Status'=>'2']);
+        return response()->json(['success' => true]);
+    }  
+
+    public function delete_multi_triptype(Request $request)
+    {
+        $ids = $request->input('ids');
+        Triptype::whereIn('TripTypeID', $ids)->update(['Status'=>'2']);
+        return response()->json(['success' => true]);
+    }  
+
+}
