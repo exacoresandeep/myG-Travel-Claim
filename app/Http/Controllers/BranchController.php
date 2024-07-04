@@ -76,12 +76,18 @@ class  BranchController extends Controller
 	    }
 	}
 
-
+/***************************************
+   Date        : 28/06/2024
+   Description :  add for branch
+***************************************/
     public function add_branch()
     {
     	return view('admin.branch.add');
     }
-    
+/***************************************
+   Date        : 28/06/2024
+   Description :  submit for branch
+***************************************/    
     public function submit(Request $req)
     {
 		$validatedData = $req->validate([
@@ -100,18 +106,28 @@ class  BranchController extends Controller
 		]); 
 		return redirect()->route('branch')->with('message','Branch Added Successfully!');
     }
-
+/***************************************
+   Date        : 28/06/2024
+   Description :  view for branch
+***************************************/
     public function view_branch($id)
     {
     	$data=Branch::where('BranchID', $id)->first();
     	return view('admin.branch.view',compact('data'));
     }
-
+/***************************************
+   Date        : 28/06/2024
+   Description :  edit for branch
+***************************************/
     public function edit_branch($id)
     {
       $branch=Branch::where('BranchID',$id)->first();
       return view('admin.branch.edit',compact('branch'));
     }
+/***************************************
+   Date        : 28/06/2024
+   Description :  update forms for branch
+***************************************/    
     public function update_branch_submit(Request $req)
     { 
         Branch::where('BranchID',$req->id)->update([
@@ -122,13 +138,19 @@ class  BranchController extends Controller
         ]);
         return redirect()->route('branch')->with('message','Branch updated Successfully!');
     }
-
+/***************************************
+   Date        : 28/06/2024
+   Description :  delete for branch
+***************************************/
     public function delete_branch($id)
     {
         Branch::where('BranchID', $id)->update(['Status'=>'2']);
         return response()->json(['success' => true]);
     }  
-
+/***************************************
+   Date        : 28/06/2024
+   Description :  multiple deletions for branch
+***************************************/
     public function delete_multi_branch(Request $request)
     {
         $ids = $request->input('ids');
