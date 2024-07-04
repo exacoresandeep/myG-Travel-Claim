@@ -72,11 +72,19 @@ class TripController extends Controller
 	}
 
 
+/***************************************
+   Date        : 01/07/2024
+   Description :  add data for triptype
+***************************************/ 
     public function add_triptype()
     {
     	return view('admin.trip_type.add');
     }
-    
+
+/**********************************************
+   Date        : 01/07/2024
+   Description :  submit datas for triptype
+**********************************************/     
     public function submit(Request $req)
     {
 		$validatedData = $req->validate([
@@ -93,17 +101,31 @@ class TripController extends Controller
 		return redirect()->route('trip_type_mgmt')->with('message','Triptype Added Successfully!');
     }
 
+/***********************************************
+   Date        : 01/07/2024
+   Description :  view data lists for triptype
+***********************************************/ 
     public function view_triptype($id)
     {
     	$data=Triptype::where('TripTypeID', $id)->first();
     	return view('admin.trip_type.view',compact('data'));
     }
 
+/***************************************
+   Date        : 01/07/2024
+   Description :  edit for triptype
+***************************************/ 
     public function edit_triptype($id)
     {
       $triptype=Triptype::where('TripTypeID',$id)->first();
       return view('admin.trip_type.edit',compact('triptype'));
     }
+
+
+/*********************************************
+   Date        : 01/07/2024
+   Description :  update datas  for triptype
+*********************************************/     
     public function update_triptype_submit(Request $req)
     { 
         Triptype::where('TripTypeID',$req->id)->update([
@@ -114,12 +136,20 @@ class TripController extends Controller
         return redirect()->route('trip_type_mgmt')->with('message','Triptype updated Successfully!');
     }
 
+/*************************************************
+   Date        : 01/07/2024
+   Description :  delete datas for triptype
+*************************************************/ 
     public function delete_triptype($id)
     {
         Triptype::where('TripTypeID', $id)->update(['Status'=>'2']);
         return response()->json(['success' => true]);
     }  
 
+/****************************************************
+   Date        : 01/07/2024
+   Description :  delete multiple datas for triptype
+****************************************************/ 
     public function delete_multi_triptype(Request $request)
     {
         $ids = $request->input('ids');
