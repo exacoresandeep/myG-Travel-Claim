@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller; // Import the base Controller class
 use DB;
 use Hash;
 use JWTAuth;
+use App\Models\UserManagement;
 
 class AuthController extends Controller
 {
@@ -58,6 +59,8 @@ class AuthController extends Controller
                 return response()->json(['message' => 'Please check the password','statusCode'=>422,'data'=>[],'success'=>'error'],200);
             }
             $userData     = User::where('emp_id', '=', $request->emp_id)->first();
+
+
             $userToken=JWTAuth::fromUser($userData);
             $token   = $this->createNewToken($userToken,$userData);
             $message="verified successfully!";
@@ -65,9 +68,10 @@ class AuthController extends Controller
         }
         else
         {
+
             User::Create([
-                'emp_id'=>$request->emp_id,
-                'password'=>Hash::make($request->password)
+                'EmployeeID'=>$request->emp_id,
+                // 'password'=>Hash::make($request->password)
             ]);
             $userData     = User::where('emp_id', '=', $request->emp_id)->first();
             $userToken=JWTAuth::fromUser($userData);
@@ -187,7 +191,7 @@ class AuthController extends Controller
    Date        :29/06/2024
    Description :  list of category 
 ****************************************/
-     public function list_category()
+    public function list_category()
     {
         try
         {
@@ -234,4 +238,47 @@ class AuthController extends Controller
             ]);
         }
     }
+
+    /****************************************
+    Date        :06/07/2024
+    Description :  Employee Names
+    ****************************************/
+    public function employeeNames(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'emp_id' => 'required',
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->errors(),
+                'statusCode' => 422,
+                'data' => [],
+                'success' => 'error',
+            ], 422);  // Change the status code here to 422
+        }
+        try {
+            // Fetch employee details
+            $employeeDetails = DB::table('users')
+                ->where('emp_id', $request->emp_id)
+                ->get();
+            $message = "Result fetched successfully!";
+            return response()->json([
+                'message' => $message,
+                'statusCode' => 200,
+                'data' => $employeeDetails,
+                'success' => 'success'
+            ], 200);
+        } catch (\Exception $e) {
+            // Log the exception
+            Log::error('Error fetching employee details:', ['exception' => $e]);
+            return response()->json([
+                'success' => 'error',
+                'statusCode' => 500,
+                'data' => [],
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+    
 }
