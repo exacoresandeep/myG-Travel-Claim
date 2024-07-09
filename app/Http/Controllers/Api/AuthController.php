@@ -4,11 +4,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Tripclaim;
+use App\Models\Policy;
 use Validator;
 use App\Http\Controllers\Controller; // Import the base Controller class
 use DB;
 use Hash;
 use JWTAuth;
+use App\Models\UserManagement;
 
 class AuthController extends Controller
 {
@@ -58,6 +60,8 @@ class AuthController extends Controller
                 return response()->json(['message' => 'Please check the password','statusCode'=>422,'data'=>[],'success'=>'error'],200);
             }
             $userData     = User::where('emp_id', '=', $request->emp_id)->first();
+
+
             $userToken=JWTAuth::fromUser($userData);
             $token   = $this->createNewToken($userToken,$userData);
             $message="verified successfully!";
@@ -65,17 +69,20 @@ class AuthController extends Controller
         }
         else
         {
-            User::Create([
-                'emp_id'=>$request->emp_id,
-                'password'=>Hash::make($request->password)
-            ]);
-            $userData     = User::where('emp_id', '=', $request->emp_id)->first();
-            $userToken=JWTAuth::fromUser($userData);
-            $token   = $this->createNewToken($userToken,$userData);
-            $message="user verified successfully!";
-            return response()->json(['message'=>$message, 'statusCode' => $this-> successStatus,'data'=>$userData,'token'=>$token,'success' => 'success'], $this-> successStatus);    
+            return response()->json(['message' => 'Invalid Username','statusCode'=>422,'data'=>[],'success'=>'error'],200);
+            // User::Create([
+            //     'EmployeeID'=>$request->emp_id,
+            //     // 'password'=>Hash::make($request->password)
+            // ]);
+            // $userData     = User::where('emp_id', '=', $request->emp_id)->first();
+            // $userToken=JWTAuth::fromUser($userData);
+            // $token   = $this->createNewToken($userToken,$userData);
+            // $message="user verified successfully!";
+            // return response()->json(['message'=>$message, 'statusCode' => $this-> successStatus,'data'=>$userData,'token'=>$token,'success' => 'success'], $this-> successStatus);    
         }
     }
+
+   
     
 
 /****************************************
@@ -143,7 +150,10 @@ class AuthController extends Controller
         {
             if(auth()->user())
             {
-                $branch   = DB::table('myg_11_branch')->where('Status', '1')->get();
+                $branch   = DB::table('myg_11_branch')
+                                ->where('Status', '1')
+                                ->select('BranchID', 'BranchName', 'BranchCode')
+                                ->get();
                 $message="Result fetched successfully!";
                 return response()->json(['message'=>$message, 'statusCode' => $this-> successStatus,'data'=>$branch,'success' => 'success'], $this->successStatus);
             }
@@ -168,7 +178,10 @@ class AuthController extends Controller
         {
             if(auth()->user())
             {
-                $triptype   = DB::table('myg_01_triptypes')->where('Status', '1')->get();
+                $triptype   = DB::table('myg_01_triptypes')
+                                ->where('Status', '1')
+                                ->select('TripTypeID', 'TripTypeName')
+                                ->get();
                 $message="Result fetched successfully!";
                 return response()->json(['message'=>$message, 'statusCode' => $this-> successStatus,'data'=>$triptype,'success' => 'success'], $this->successStatus);
             }
@@ -187,13 +200,15 @@ class AuthController extends Controller
    Date        :29/06/2024
    Description :  list of category 
 ****************************************/
-     public function list_category()
+    public function list_category()
     {
         try
         {
             if(auth()->user())
             {
-                $catgeory   = DB::table('myg_03_categories')->where('Status', '1')->get();
+                $catgeory   = DB::table('myg_03_categories')->where('Status', '1')
+                            ->select("CategoryID","CategoryName","TripFrom","TripTo","FromDate","ToDate","DocumentDate")
+                            ->get();
                 $message="Result fetched successfully!";
                 return response()->json(['message'=>$message, 'statusCode' => $this-> successStatus,'data'=>$catgeory,'success' => 'success'], $this->successStatus);
             }
@@ -234,4 +249,206 @@ class AuthController extends Controller
             ]);
         }
     }
+
+    /****************************************
+    Date        :06/07/2024
+    Description :  Employee Names
+    ****************************************/
+    public function employeeNames(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'emp_id' => 'required',
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->errors(),
+                'statusCode' => 422,
+                'data' => [],
+                'success' => 'error',
+            ], 422);  // Change the status code here to 422
+        }
+        try {
+            // Fetch employee details
+            $employeeDetails = DB::table('users')
+                ->where('emp_id', $request->emp_id)
+                ->get();
+            $message = "Result fetched successfully!";
+            return response()->json([
+                'message' => $message,
+                'statusCode' => 200,
+                'data' => $employeeDetails,
+                'success' => 'success'
+            ], 200);
+        } catch (\Exception $e) {
+            // Log the exception
+            Log::error('Error fetching employee details:', ['exception' => $e]);
+            return response()->json([
+                'success' => 'error',
+                'statusCode' => 500,
+                'data' => [],
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+    public function approvalStatus(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'TripClaimDetailID' => 'required',
+            'Status' => 'required',
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->errors(),
+                'statusCode' => 422,
+                'data' => [],
+                'success' => 'error',
+            ], 422);  // Change the status code here to 422
+        }
+        try {
+            // Fetch employee details
+            DB::table('myg_09_trip_claim_details')
+                ->where('TripClaimDetailID', $request->TripClaimDetailID)
+                ->update(['Status' => 'Completed']);
+            $message = "Claim Updated successfully!";
+            return response()->json([
+                'message' => $message,
+                'statusCode' => 200,
+                'data' => [],
+                'success' => 'success'
+            ], 200);
+        } catch (\Exception $e) {
+            // Log the exception
+            Log::error('Error in Claim Updation:', ['exception' => $e]);
+            return response()->json([
+                'success' => 'error',
+                'statusCode' => 500,
+                'data' => [],
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function policies(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'GradeID' => 'required',
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->errors(),
+                'statusCode' => 422,
+                'data' => [],
+                'success' => 'error',
+            ], 422);  // Change the status code here to 422
+        }
+       
+        try
+        {
+            if(auth()->user())
+            {
+                $policies   = Policy::with([
+                    'subCategoryDetails' => function($query) {
+                        $query->select('SubCategoryID', 'CategoryID', 'SubCategoryName');
+                    },
+                    'subCategoryDetails.categoryDetails' => function($query) {
+                        $query->select('CategoryID', 'CategoryName');
+                    },
+                    'gradeDetails' => function($query) {
+                        $query->select('GradeID', 'GradeName');
+                    }
+                ])
+                ->where('user_id', auth()->id())
+                ->where('GradeID','=',$request->GradeID)
+                ->select("PolicyID","SubCategoryID","GradeID","GradeType","GradeClass","GradeAmount","Approver","Status")
+                ->get();
+                if ($policies->isEmpty()) {
+                    Log::info('No policies found', ['user_id' => auth()->id(), 'GradeID' => $gradeId]);
+                    return response()->json([
+                        'message' => 'No policies found.',
+                        'statusCode' => 404,
+                        'data' => [],
+                        'success' => 'error',
+                    ], 404);
+                }
+                
+                $message="Result fetched successfully!";
+                return response()->json(['message'=>$message, 'statusCode' => $this-> successStatus,'data'=>$policies,'success' => 'success'], $this->successStatus);
+            }
+        } catch (\Exception $e) {
+            // Log the exception
+            Log::error('Error fetching employee details:', ['exception' => $e]);
+            return response()->json([
+                'success' => 'error',
+                'statusCode' => 500,
+                'data' => [],
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+    
+    public function tripClaim(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'GradeID' => 'required',
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->errors(),
+                'statusCode' => 422,
+                'data' => [],
+                'success' => 'error',
+            ], 422);  // Change the status code here to 422
+        }
+       
+        try
+        {
+            if(auth()->user())
+            {
+                $tripClaim   = Policy::with([
+                    'subCategoryDetails' => function($query) {
+                        $query->select('SubCategoryID', 'CategoryID', 'SubCategoryName');
+                    },
+                    'subCategoryDetails.categoryDetails' => function($query) {
+                        $query->select('CategoryID', 'CategoryName');
+                    },
+                    'gradeDetails' => function($query) {
+                        $query->select('GradeID', 'GradeName');
+                    }
+                ])
+                ->where('user_id', auth()->id())
+                ->where('GradeID','=',$request->GradeID)
+                ->select("PolicyID","SubCategoryID","GradeID","GradeType","GradeClass","GradeAmount","Approver","Status")
+                ->get();
+                if ($policies->isEmpty()) {
+                    Log::info('No policies found', ['user_id' => auth()->id(), 'GradeID' => $gradeId]);
+                    return response()->json([
+                        'message' => 'No policies found.',
+                        'statusCode' => 404,
+                        'data' => [],
+                        'success' => 'error',
+                    ], 404);
+                }
+                
+                $message="Result fetched successfully!";
+                return response()->json(['message'=>$message, 'statusCode' => $this-> successStatus,'data'=>$policies,'success' => 'success'], $this->successStatus);
+            }
+        } catch (\Exception $e) {
+            // Log the exception
+            Log::error('Error fetching employee details:', ['exception' => $e]);
+            return response()->json([
+                'success' => 'error',
+                'statusCode' => 500,
+                'data' => [],
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+    
+
+
+
 }

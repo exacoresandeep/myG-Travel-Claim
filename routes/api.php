@@ -28,5 +28,14 @@ Route::group(['middleware' => ['jwt.verify']], function ()
 	Route::get('/categories', [AuthController::class, 'list_category']);
 	Route::get('/tripTypes', [AuthController::class, 'list_triptype']);
 	Route::get('/claimList', [AuthController::class, 'claimList']);
-	Route::get('/user-profile', [AuthController::class, 'userProfile']);     
+	Route::get('/user-profile', [AuthController::class, 'userProfile']); 
+	Route::get('/employeeNames', [AuthController::class, 'employeeNames']);    
+	Route::get('/approvalStatus', [AuthController::class, 'approvalStatus']);    
+	Route::post('/policies', [AuthController::class, 'policies']);   
+
+	Route::post('/tripClaim', [AuthController::class, 'tripClaim']);    
+	Route::post('/employeeStatus', [AuthController::class, 'employeeStatus']);    
+	Route::post('/claimResubmit', [AuthController::class, 'claimResubmit']);    
+	Route::post('/notificationList', [AuthController::class, 'notificationList']);    
+	Route::post('/claimsForApproval', [AuthController::class, 'claimsForApproval']);    
 });
