@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Tripclaim;
+use App\Models\Tripclaimdetails;
 use App\Models\Policy;
 use Validator;
 use App\Http\Controllers\Controller; // Import the base Controller class
@@ -388,11 +389,20 @@ class AuthController extends Controller
             ]);
         }
     }
-    
+    public function generateId (){
+        $micro = gettimeofday()['usec'];
+        $todate =  date("YmdHis");
+        $alpha = substr(md5(rand()), 0, 2);
+        return($todate.$micro.$alpha);
+    }
+
     public function tripClaim(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'GradeID' => 'required',
+            'TripTypeId' => 'required',
+            'ApproverId' => 'required',
+            'VisitBranchId' => 'required',
+            "ClaimDetails"=>'required'
         ]);
         
         if ($validator->fails()) {
@@ -401,54 +411,65 @@ class AuthController extends Controller
                 'statusCode' => 422,
                 'data' => [],
                 'success' => 'error',
-            ], 422);  // Change the status code here to 422
+            ], 422);
         }
-       
-        try
-        {
-            if(auth()->user())
-            {
-                $tripClaim   = Policy::with([
-                    'subCategoryDetails' => function($query) {
-                        $query->select('SubCategoryID', 'CategoryID', 'SubCategoryName');
-                    },
-                    'subCategoryDetails.categoryDetails' => function($query) {
-                        $query->select('CategoryID', 'CategoryName');
-                    },
-                    'gradeDetails' => function($query) {
-                        $query->select('GradeID', 'GradeName');
-                    }
-                ])
-                ->where('user_id', auth()->id())
-                ->where('GradeID','=',$request->GradeID)
-                ->select("PolicyID","SubCategoryID","GradeID","GradeType","GradeClass","GradeAmount","Approver","Status")
-                ->get();
-                if ($policies->isEmpty()) {
-                    Log::info('No policies found', ['user_id' => auth()->id(), 'GradeID' => $gradeId]);
-                    return response()->json([
-                        'message' => 'No policies found.',
-                        'statusCode' => 404,
-                        'data' => [],
-                        'success' => 'error',
-                    ], 404);
-                }
-                
-                $message="Result fetched successfully!";
-                return response()->json(['message'=>$message, 'statusCode' => $this-> successStatus,'data'=>$policies,'success' => 'success'], $this->successStatus);
-            }
-        } catch (\Exception $e) {
-            // Log the exception
-            Log::error('Error fetching employee details:', ['exception' => $e]);
-            return response()->json([
-                'success' => 'error',
-                'statusCode' => 500,
-                'data' => [],
-                'message' => $e->getMessage(),
-            ]);
-        }
-    }
     
-
-
-
+        // try {
+            if (auth()->user()) {
+                $claim_id = $this->generateId();
+                $data = $request->all(); // Get all request data as an array
+                
+                $tripClaim = Tripclaim::create([
+                    'TripClaimID' => $claim_id,
+                    'TripTypeID' => $request->TripTypeId,
+                    'ApproverID' => $request->ApproverId,
+                    'TripPurpose' => $request->TripPurpose ?? null,
+                    'VisitBranchID' => $request->VisitBranchId,
+                    'AdvanceAmount' => $request->AdvanceAmount ?: null,
+                    'RejectionCount' => 0,
+                    'ApprovalDate' => $request->ApprovalDate ?: null,
+                    'NotificationFlg' => "0",
+                    'Status' => "Pending",
+                    'user_id' => auth()->id(),
+                ]);
+    
+                foreach ($data["ClaimDetails"] as $details) {
+                    $Tripclaimdetails = Tripclaimdetails::create([
+                        'TripClaimDetailID' => $this->generateId(),
+                        'TripClaimID' => $claim_id,
+                        'PolicyID' => $details['PolicyID'],
+                        'FromDate' => $details['FromDate'] ?? null,
+                        'ToDate' => $details['ToDate'] ?? null,
+                        'TripFrom' => $details['TripFrom'] ?? null,
+                        'TripTo' => $details['TripTo'] ?? null,
+                        'DocumentDate' => $details['DocumentDate'] ?? null,
+                        'StartMeter' => $details['StartMeter'] ?? null,
+                        'EndMeter' => $details['EndMeter'] ?? null,
+                        'Qty' => $details['Qty'] ?? null,
+                        'UnitAmount' => $details['UnitAmount'] ?? null,
+                        'NoOfPersons' => $details['NoOfPersons'],
+                        'FileUrl' => $details['FileUrl'] ?? null,
+                        'Remarks' => $details['Remarks'] ?? null,
+                        'NotificationFlg' => "1",
+                        'RejectionCount' => 1,
+                        'ApproverID' => $request->ApproverID,
+                        'Status' => "Pending",
+                        'user_id' => auth()->id(),
+                    ]);
+                }
+    
+                $message = "Claim submitted successfully!";
+                return response()->json(['message' => $message, 'statusCode' => 200, 'success' => 'success'], 200);
+            }
+        // } catch (\Exception $e) {
+        //     // Log the exception with more details
+        //     Log::error('Claim submission failed:', ['exception' => $e, 'request_data' => $request->all()]);
+        //     return response()->json([
+        //         'success' => 'error',
+        //         'statusCode' => 500,
+        //         'data' => [],
+        //         'message' => 'An error occurred while submitting the claim. Please try again later.',
+        //     ], 500);
+        // }
+    }
 }
