@@ -18,6 +18,8 @@ class Category extends Model
         'ToDate',
         'DocumentDate',
         'user_id',
-        'Status'
+        'Status',
+        'StartMeter',
+        'EndMeter'
     ];
 }
