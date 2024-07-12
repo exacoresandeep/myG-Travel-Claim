@@ -17,4 +17,9 @@ class Personsdetails extends Model
         'ClaimOwner',
         'user_id'
     ];
+
+    public function userDetails()
+    {
+        return $this->hasMany(User::class, 'id','EmployeeID');
+    }
 }
