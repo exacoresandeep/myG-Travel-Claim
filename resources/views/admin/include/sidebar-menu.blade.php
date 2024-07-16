@@ -37,6 +37,12 @@
             <i class="fas fa-code-branch" aria-hidden="true"></i> Branch management <i class="" aria-hidden="true"></i>
           </a>
         </div>
+
+        <div class="card-header">
+        <a class="collapsed card-link" href="{{url('/grade')}}">
+            <i class="fas fa-book-open" aria-hidden="true"></i> Grade management <i class="" aria-hidden="true"></i>
+          </a>
+        </div>
        
         </div>
       </div>
@@ -57,7 +63,7 @@
 
       <div class="card">
         <div class="card-header">
-          <a class="collapsed card-link" href="user-management.php">
+          <a class="collapsed card-link" href="{{url('list_users')}}">
             <i class="fa fa-users" aria-hidden="true"></i> User Management <i class="" aria-hidden="true"></i>
           </a>
         </div>
@@ -76,13 +82,28 @@
           </a>
         </div>
       </div>
+     
+
       <div class="card">
         <div class="card-header">
-          <a class="collapsed card-link" href="claim-category-management.php">
-            <i class="fa fa-cube" aria-hidden="true"></i> Claim Category Management <i class="" aria-hidden="true"></i>
+          <a class="card-link" data-toggle="collapse" href="#collapseFive">
+            <i class="fa fa-list-alt" aria-hidden="true"></i> Category Management <i class="fa fa-caret-right second" aria-hidden="true"></i>
           </a>
         </div>
+        <div id="collapseFive" class="collapse" data-parent="#accordion">
+          <div class="card-body">
+           <a class="collapsed card-link" href="{{url('claim_category')}}">
+            <i class="" aria-hidden="true"></i> Category Claim  <i class="" aria-hidden="true"></i>
+          </a>
+            <a class="collapsed card-link" href="{{url('sub_claim_category')}}">
+            <i class="" aria-hidden="true"></i> Sub Category Claim  <i class="" aria-hidden="true"></i>
+          </a>
+          </div>
+        </div>
       </div>
+
+
+
       <div class="card">
         <div class="card-header">
           <a class="collapsed card-link" data-toggle="collapse" href="#collapseFour">

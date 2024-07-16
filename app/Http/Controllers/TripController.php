@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Triptype;
+use App\Models\User;
 use Auth;
 
 class TripController extends Controller
@@ -17,6 +18,13 @@ class TripController extends Controller
     {
         return view('admin.trip_type.list');
     }
+
+    public function view_user($id)
+    {
+        $user=User::where('id',$id)->first();
+        return view('admin.user.view',compact('user'));
+    }
+    
 
 /***************************************
    Date        : 01/07/2024

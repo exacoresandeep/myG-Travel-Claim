@@ -6,7 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>All Users :: DMS</title>
+    <title>All Branchs :: DMS</title>
     @include("admin.include.header")
 </head>
 <body>
