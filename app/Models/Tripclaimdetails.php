@@ -30,8 +30,13 @@ class Tripclaimdetails extends Model
         'user_id'
     ];
 
-     public function personsDetails()
+    public function personsDetails()
     {
         return $this->hasMany(PersonsDetails::class, 'TripClaimDetailID', 'TripClaimDetailID');
     }
+    public function policyDetails()
+    {
+        return $this->hasMany(Policy::class, 'PolicyID', 'PolicyID');
+    }
+    
 }

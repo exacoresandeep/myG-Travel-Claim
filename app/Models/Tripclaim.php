@@ -28,4 +28,19 @@ class Tripclaim extends Model
     {
         return $this->hasMany(Tripclaimdetails::class, 'TripClaimID','TripClaimID');
     }
+
+    public function visitbranchdetails()
+    {
+        return $this->hasMany(Branch::class, 'BranchID','VisitBranchID');
+    }
+
+    public function approverdetails()
+    {
+        return $this->hasMany(User::class, 'id','ApproverID');
+    }
+    
+    public function triptypedetails()
+    {
+        return $this->hasMany(TripType::class, 'TripTypeID','TripTypeID');
+    }
 }
