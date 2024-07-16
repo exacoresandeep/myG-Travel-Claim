@@ -71,15 +71,15 @@ class AuthController extends Controller
         else
         {
             return response()->json(['message' => 'Invalid Username','statusCode'=>422,'data'=>[],'success'=>'error'],200);
-            // User::Create([
-            //     'EmployeeID'=>$request->emp_id,
-            //     // 'password'=>Hash::make($request->password)
-            // ]);
-            // $userData     = User::where('emp_id', '=', $request->emp_id)->first();
-            // $userToken=JWTAuth::fromUser($userData);
-            // $token   = $this->createNewToken($userToken,$userData);
-            // $message="user verified successfully!";
-            // return response()->json(['message'=>$message, 'statusCode' => $this-> successStatus,'data'=>$userData,'token'=>$token,'success' => 'success'], $this-> successStatus);    
+            User::Create([
+                'EmployeeID'=>$request->emp_id,
+                // 'password'=>Hash::make($request->password)
+            ]);
+            $userData     = User::where('emp_id', '=', $request->emp_id)->first();
+            $userToken=JWTAuth::fromUser($userData);
+            $token   = $this->createNewToken($userToken,$userData);
+            $message="user verified successfully!";
+            return response()->json(['message'=>$message, 'statusCode' => $this-> successStatus,'data'=>$userData,'token'=>$token,'success' => 'success'], $this-> successStatus);    
         }
     }
 
@@ -208,9 +208,14 @@ class AuthController extends Controller
             if(auth()->user())
             {
                 $catgeory   = DB::table('myg_03_categories')->where('Status', '1')
-                            ->select("CategoryID","CategoryName","TripFrom","TripTo","FromDate","ToDate","DocumentDate","StartMeter","EndMeter")
+                            ->select("CategoryID","CategoryName","TripFrom","TripTo","FromDate","ToDate","DocumentDate","StartMeter","EndMeter","ImageUrl")
                             ->get();
                 $message="Result fetched successfully!";
+                $catgeory->map(function($category) {
+                    $imagePath = 'images/category/' . $category->ImageUrl;
+                    $category->ImageUrl = url($imagePath);
+                    return $category;
+                });
                 return response()->json(['message'=>$message, 'statusCode' => $this-> successStatus,'data'=>$catgeory,'success' => 'success'], $this->successStatus);
             }
         }
@@ -237,15 +242,30 @@ class AuthController extends Controller
             if(auth()->user())
             {
                 //$tripdata   = Tripclaim::with('tripclaimdetails.personsDetails')->where('user_id', auth()->id())->get();
-                $tripdata   = Tripclaim::with('tripclaimdetails.personsDetails.userDetails','tripclaimdetails.policyDetails.subCategoryDetails.categoryDetails')->where('user_id', auth()->id())->get()
+                $tripdata   = Tripclaim::with('tripclaimdetails.personsDetails.userDetails','tripclaimdetails.policyDetails.subCategoryDetails.categoryDetails','triptypedetails','approverdetails','visitbranchdetails')->where('user_id', auth()->id())->get()
                 ->map(function ($trip) {
                     return [
                         'tripclaim' => [
                             "TripClaimID"=>$trip->TripClaimID,
-                            "TripTypeId"=>$trip->TripTypeID,
-                            "ApproverId"=>$trip->ApproverID,
+                            "TripTypeDetails" => $trip->triptypedetails->map(function ($typedetail) {
+                                return [
+                                    "TripTypeID" => $typedetail->TripTypeID,
+                                    "TripTypeName" => $typedetail->TripTypeName
+                                ];
+                            }),
+                            "ApproverDetails"=> $trip->approverdetails->map(function ($appdetail) {
+                                return [
+                                    "emp_id" => $appdetail->emp_id,
+                                    "emp_name" => $appdetail->emp_name
+                                ];
+                            }),
                             "TripPurpose"=>$trip->TripPurpose,
-                            "VisitBranchId"=>$trip->VisitBranchID,
+                            "VisitBranchId"=> $trip->visitbranchdetails->map(function ($branchdetail) {
+                                return [
+                                    "BranchID" => $branchdetail->BranchID,
+                                    "BranchName" => $branchdetail->BranchName
+                                ];
+                            }),
                             'ClaimDetails' => $trip->tripclaimdetails->map(function ($detail) {
                                 return [
                                     "TripClaimDetailID" => $detail->TripClaimDetailID,
@@ -345,7 +365,7 @@ class AuthController extends Controller
         try {
             // Fetch employee details
             $employeeDetails = DB::table('users')
-                ->where('emp_id', $request->emp_id)
+                ->where('emp_id', 'like', '%' . $request->emp_id . '%')
                 ->get();
             $message = "Result fetched successfully!";
             return response()->json([
@@ -500,9 +520,9 @@ class AuthController extends Controller
                     'ApproverID' => $request->ApproverId,
                     'TripPurpose' => $request->TripPurpose ?? null,
                     'VisitBranchID' => $request->VisitBranchId,
-                    'AdvanceAmount' => $request->AdvanceAmount ?: null,
+                    'AdvanceAmount' =>null,
                     'RejectionCount' => 0,
-                    'ApprovalDate' => $request->ApprovalDate ?: null,
+                    'ApprovalDate' => null,
                     'NotificationFlg' => "0",
                     'Status' => "Pending",
                     'user_id' => auth()->id(),
@@ -525,8 +545,8 @@ class AuthController extends Controller
                         'NoOfPersons' => $details['NoOfPersons'],
                         'FileUrl' => $details['FileUrl'] ?? null,
                         'Remarks' => $details['Remarks'] ?? null,
-                        'NotificationFlg' => "1",
-                        'RejectionCount' => 1,
+                        'NotificationFlg' => "0",
+                        'RejectionCount' => 0,
                         'ApproverID' => $request->ApproverID,
                         'Status' => "Pending",
                         'user_id' => auth()->id(),
@@ -628,17 +648,33 @@ class AuthController extends Controller
         {
             if(auth()->user())
             {
-                $tripdata   = Tripclaim::with('tripclaimdetails.personsDetails.userDetails','tripclaimdetails.policyDetails.subCategoryDetails.categoryDetails')
-                ->where('user_id', auth()->id())
-                ->where('ApproverID', $request->ApproverID)
+                $tripdata   = Tripclaim::with('tripclaimdetails.personsDetails.userDetails','tripclaimdetails.policyDetails.subCategoryDetails.categoryDetails','triptypedetails','approverdetails','visitbranchdetails')
+                // ->where('user_id', auth()->id())
+                ->where('ApproverID', auth()->id())
                 ->get()
                 ->map(function ($trip) {
                     return [
                         'tripclaim' => [
-                            "TripTypeId"=>$trip->TripTypeID,
-                            "ApproverId"=>$trip->ApproverID,
+                            "TripClaimID"=>$trip->TripClaimID,
+                            "TripTypeDetails" => $trip->triptypedetails->map(function ($typedetail) {
+                                return [
+                                    "TripTypeID" => $typedetail->TripTypeID,
+                                    "TripTypeName" => $typedetail->TripTypeName
+                                ];
+                            }),
+                            "ApproverDetails"=> $trip->approverdetails->map(function ($appdetail) {
+                                return [
+                                    "emp_id" => $appdetail->emp_id,
+                                    "emp_name" => $appdetail->emp_name
+                                ];
+                            }),
                             "TripPurpose"=>$trip->TripPurpose,
-                            "VisitBranchId"=>$trip->VisitBranchID,
+                            "VisitBranchId"=> $trip->visitbranchdetails->map(function ($branchdetail) {
+                                return [
+                                    "BranchID" => $branchdetail->BranchID,
+                                    "BranchName" => $branchdetail->BranchName
+                                ];
+                            }),
                             'ClaimDetails' => $trip->tripclaimdetails->map(function ($detail) {
                                 return [
                                     "TripClaimDetailID" => $detail->TripClaimDetailID,

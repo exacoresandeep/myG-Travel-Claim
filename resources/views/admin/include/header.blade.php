@@ -47,12 +47,14 @@
   .button_orange {
     background-color: #E95815;
     color: white;
-    padding: 10px 10px;
+    padding: 4px 5px;
+    /* padding: 10px 10px; */
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
+    font-size: 14px;
+    /* font-size: 16px; */
+    /* margin: 4px 2px; */
     cursor: pointer;
     border: none;
     border-radius: 4px;

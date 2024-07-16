@@ -36,7 +36,7 @@ Route::group(['middleware' => ['jwt.verify']], function ()
 	Route::post('/tripClaim', [AuthController::class, 'tripClaim']);    
 	Route::post('/employeeStatus', [AuthController::class, 'employeeStatus']);   //not done 
 	Route::post('/claimResubmit', [AuthController::class, 'claimResubmit']);    
-	Route::post('/claimsForApproval', [AuthController::class, 'claimsForApproval']);      
+	Route::get('/claimsForApproval', [AuthController::class, 'claimsForApproval']);      
 	Route::post('/notificationList', [AuthController::class, 'notificationList']);    //not done
 	Route::post('/notificationChange', [AuthController::class, 'notificationChange']);    //not done
 });

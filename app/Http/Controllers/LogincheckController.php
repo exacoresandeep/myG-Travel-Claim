@@ -28,8 +28,8 @@ class LogincheckController extends Controller
           'password.required' => 'Please enter the password.',
         ]);
         $credentials = $req->only('username', 'password');
-        $check_exist=User::where('user_name',$req->username)->exists();
-        $user = User::where('user_name', $credentials['username'])->first();
+        $check_exist=User::where('emp_id',$req->username)->exists();
+        $user = User::where('emp_id', $credentials['username'])->first();
         if($check_exist!=true)
         {
             return Redirect::back()->withErrors(['msg' => 'Incorrect username.']);
@@ -37,7 +37,7 @@ class LogincheckController extends Controller
         else if ($check_exist==true && !Hash::check($credentials['password'], $user->password)) {
             return Redirect::back()->withErrors(['msg' => 'Incorrect password.']);
         }
-        else if (Auth::attempt(['user_name' => $credentials['username'], 'password' => $credentials['password']])) 
+        else if (Auth::attempt(['emp_id' => $credentials['username'], 'password' => $credentials['password']])) 
         {
             return redirect()->route('home');
         }

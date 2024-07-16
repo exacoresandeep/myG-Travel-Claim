@@ -33,6 +33,11 @@ Route::get('/claim-view', [App\Http\Controllers\ClaimController::class, 'view'])
 
 ########################################################################################################
 
+Route::get('/claim_request', [App\Http\Controllers\ClaimController::class, 'index'])->name('claim_request');
+Route::get('/claim-view', [App\Http\Controllers\ClaimController::class, 'view'])->name('claim-view');
+
+
+
 ##############################  branch details#########################################
 
 
