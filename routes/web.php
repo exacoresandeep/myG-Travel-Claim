@@ -33,9 +33,19 @@ Route::get('/claim-view', [App\Http\Controllers\ClaimController::class, 'view'])
 
 ########################################################################################################
 
-Route::get('/claim_request', [App\Http\Controllers\ClaimController::class, 'index'])->name('claim_request');
-Route::get('/claim-view', [App\Http\Controllers\ClaimController::class, 'view'])->name('claim-view');
+Route::get('/approved_claims', [App\Http\Controllers\ClaimManagementController::class, 'approved_claims'])->name('approved_claims');
+Route::get('/approved_claims_list', [App\Http\Controllers\ClaimManagementController::class, 'approved_claims_list'])->name('approved_claims_list');
+Route::get('/approved_claims_view/{id}', [App\Http\Controllers\ClaimManagementController::class, 'approved_claims_view'])->name('approved_claims_view');
+Route::post('/complete_approved_claim', [App\Http\Controllers\ClaimManagementController::class, 'complete_approved_claim'])->name('complete_approved_claim');
 
+Route::get('/settled_claims', [App\Http\Controllers\ClaimManagementController::class, 'settled_claims'])->name('settled_claims');
+Route::get('/settled_claims_view', [App\Http\Controllers\ClaimManagementController::class, 'settled_claims_view'])->name('settled_claims_view');
+
+Route::get('/rejected_claims', [App\Http\Controllers\ClaimManagementController::class, 'rejected_claims'])->name('rejected_claims');
+Route::get('/rejected_claims_view', [App\Http\Controllers\ClaimManagementController::class, 'rejected_claims_view'])->name('rejected_claims_view');
+
+Route::get('/ro_approval_pending', [App\Http\Controllers\ClaimManagementController::class, 'ro_approval_pending'])->name('ro_approval_pending');
+Route::get('/ro_approval_pending_view', [App\Http\Controllers\ClaimManagementController::class, 'ro_approval_pending_view'])->name('ro_approval_pending_view');
 
 
 ##############################  branch details#########################################

@@ -22,4 +22,9 @@ class Category extends Model
         'StartMeter',
         'EndMeter'
     ];
+
+    public function subcategorydetails()
+    {
+        return $this->hasMany(SubCategories::class, 'CategoryID', 'CategoryID');
+    }
 }
