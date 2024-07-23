@@ -39,4 +39,5 @@ class Tripclaimdetails extends Model
         return $this->hasMany(Policy::class, 'PolicyID', 'PolicyID');
     }
     
+    
 }

@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Tripclaim;
 use App\Models\Tripclaimdetails;
 use App\Models\Policy;
+use App\Models\Category;
 use Validator;
 use App\Http\Controllers\Controller; // Import the base Controller class
 use DB;
@@ -173,7 +174,7 @@ class AuthController extends Controller
    Date        :29/06/2024
    Description :  list of trip types
 ****************************************/
-     public function list_triptype()
+    public function list_triptype()
     {
         try
         {
@@ -216,7 +217,107 @@ class AuthController extends Controller
                     $category->ImageUrl = url($imagePath);
                     return $category;
                 });
+                $catgeory->map(function($item) {
+                    $item->Expand = false;
+                    $item->Oncheck = false;
+                    return $item;
+                });
                 return response()->json(['message'=>$message, 'statusCode' => $this-> successStatus,'data'=>$catgeory,'success' => 'success'], $this->successStatus);
+            }
+        }
+        catch (\Exception $e) 
+        {
+            return response()->json([
+                'success'    => 'error',
+                'statusCode' => 500,
+                'data'       => [],
+                'message'    => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function categorieswithpolicy(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'grade' => 'required',
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->errors(),
+                'statusCode' => 422,
+                'data' => [],
+                'success' => 'error',
+            ], 422);  // Change the status code here to 422
+        }
+        try
+        {
+            if(auth()->user())
+            {
+                $gradeID = $request->grade;
+                $category = Category::with(['subcategorydetails' => function($query) use ($gradeID) {
+                    $query->whereHas('policies', function($q) use ($gradeID) {
+                        $q->where('GradeID', $gradeID);
+                    })->with(['policies' => function($q) use ($gradeID) {
+                        $q->where('GradeID', $gradeID);
+                    }, 'uomdetails']);
+                }])->where('Status', '1')
+                  ->select("CategoryID", "CategoryName", "TripFrom", "TripTo", "FromDate", "ToDate", "DocumentDate", "StartMeter", "EndMeter", "ImageUrl")
+                  ->get()
+                  ->filter(function ($category) {
+                    return $category->subcategorydetails->isNotEmpty();
+                });
+                $message = "Result fetched successfully!";
+
+                // Transform the data
+                $category = $category->map(function($category) {
+                    $imagePath = 'images/category/' . $category->ImageUrl;
+                    $category->ImageUrl = url($imagePath);
+
+                    // Safely handle subcategorydetails
+                    $category->subcategorydetails = $category->subcategorydetails->map(function($subcategory) {
+                        return [
+                            'SubCategory' => [
+                                "SubCategoryID" => $subcategory->SubCategoryID,
+                                "SubCategoryName" => $subcategory->SubCategoryName,
+                                "Status" => $subcategory->Status,
+                                "Policies" => $subcategory->policies->map(function($policy) {
+                                    return [
+                                        "PolicyID" => $policy->PolicyID,
+                                        "SubCategoryID" => $policy->SubCategoryID,
+                                        "GradeID" => $policy->GradeID,
+                                        "GradeType" => $policy->GradeType,
+                                        "GradeClass" => $policy->GradeClass,
+                                        "GradeAmount" => $policy->GradeAmount,
+                                        "Approver" => $policy->Approver,
+                                        "Status" => $policy->Status,
+                                    ];
+                                }),
+                                "UomDetails" => $subcategory->uomdetails->map(function($uomdetails) {
+                                    return [
+                                        "UomID" => $uomdetails->UomID,
+                                        "Unit" => $uomdetails->Unit,
+                                        "Measurement" => $uomdetails->Measurement,
+                                        "Status" => $uomdetails->Status
+                                    ];
+                                }),
+                            ]
+                        ];
+                    });
+
+                    $category->Expand = false;
+                    $category->Oncheck = false;
+
+                    return $category->only(['CategoryID', 'CategoryName', 'TripFrom', 'TripTo', 'FromDate', 'ToDate', 'DocumentDate', 'StartMeter', 'EndMeter', 'ImageUrl', 'subcategorydetails', 'Expand', 'Oncheck']);
+
+                });
+
+                return response()->json([
+                    'message' => $message,
+                    'statusCode' => $this->successStatus,
+                    'data' => $category,
+                    'success' => 'success'
+                ], $this->successStatus);
             }
         }
         catch (\Exception $e) 

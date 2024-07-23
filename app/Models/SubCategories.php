@@ -17,11 +17,21 @@ class SubCategories extends Model
         'user_id'
     ];
 
-
+    public function policies()
+    {
+        return $this->hasMany(Policy::class, 'SubCategoryID', 'SubCategoryID');
+    }
+    
     public function categoryDetails()
     {
         return $this->hasMany(Category::class, 'CategoryID','CategoryID');
     }
+
+    public function uomdetails()
+    {
+        return $this->hasMany(UOM::class, 'UomID', 'UomID');
+    }
+
 
     public function categorydata()
     {

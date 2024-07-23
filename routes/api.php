@@ -26,6 +26,7 @@ Route::group(['middleware' => ['jwt.verify']], function ()
 {
 	Route::get('/branches', [AuthController::class, 'list_branch']);
 	Route::get('/categories', [AuthController::class, 'list_category']);
+	Route::post('/categorieswithpolicy', [AuthController::class, 'categorieswithpolicy']);
 	Route::get('/tripTypes', [AuthController::class, 'list_triptype']);
 	Route::get('/claimList', [AuthController::class, 'claimList']);
 	Route::get('/user-profile', [AuthController::class, 'userProfile']); 
