@@ -36,7 +36,7 @@ class Tripclaim extends Model
 
     public function approverdetails()
     {
-        return $this->hasMany(User::class, 'id','ApproverID');
+        return $this->hasMany(User::class, 'emp_id','ApproverID');
     }
     
     public function triptypedetails()
