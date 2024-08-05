@@ -16,6 +16,7 @@ use DB;
 use Hash;
 use JWTAuth;
 use App\Models\UserManagement;
+use App\Models\Sequirityvlunerability;
 use Illuminate\Support\Facades\Http;
 use DatePeriod;
 use DateInterval;
@@ -33,7 +34,7 @@ class AuthController extends Controller
     public function __construct()
     {
         date_default_timezone_set('Asia/Kolkata');
-        $this->middleware('jwt.verify', ['except' => ['login','refresh','logout','hrmstokengeneration']]);
+        $this->middleware('jwt.verify', ['except' => ['login','logout','hrmstokengeneration','refresh_token']]);
     }
 
     public function hrmstokengeneration(Request $request)
@@ -209,13 +210,30 @@ class AuthController extends Controller
             {
                 return response()->json(['message' => 'Please check the password','statusCode'=>422,'data'=>[],'success'=>'error'],200);
             }
-            $userData     = User::where('emp_id', '=', $request->emp_id)->first();
+            $register   = User::where('emp_id',$request->emp_id)->first();
+            $sequirity_userid=Sequirityvlunerability::where('user_id',$register->id)->update([
+                'user_id'=>$register->id,
+                'random_string'=>substr(uniqid(), 0,25)
+            ]);
 
+            $sequirity_refresh_token=Sequirityvlunerability::select('random_string')->where('user_id',$register->id)->get();
+            $userData = User::with([
+            'branchDetails' => function ($query) {
+            $query->select('BranchID', 'BranchName'); // Replace with the actual columns you need
+            },
+            'baselocationDetails' => function ($query) {
+            $query->select('BranchID as branch_id', 'BranchName as branch_name', 'BranchCode as branch_code', 'BranchID'); // Include the foreign key to the user table
+            },
+            'gradeDetails' => function ($query) {
+            $query->select('GradeID as grade_id', 'GradeName as grade_name', 'GradeID'); // Include the foreign key to the user table
+            }
+            ])->where('emp_id', '=', $request->emp_id)->first();
 
+            // dd($userData);
             $userToken=JWTAuth::fromUser($userData);
             $token   = $this->createNewToken($userToken,$userData);
             $message="verified successfully!";
-            return response()->json(['message'=>$message, 'statusCode' => $this-> successStatus,'data'=>$userData,'token'=>$token,'success' => 'success'], $this-> successStatus);
+            return response()->json(['message'=>$message, 'statusCode' => $this-> successStatus,'data'=>$userData,'token'=>$token,'success' => 'success','refresh_token'=>$sequirity_refresh_token], $this-> successStatus);
         }
         else
         {
@@ -263,7 +281,7 @@ class AuthController extends Controller
           
             $now = new \DateTime();  // Create a new DateTime object
             $currentDateTime = $now->format('Y-m-d H:i:s'); 
-            User::Create([
+            $register=User::Create([
                 'emp_id'=>$emp_id,
                 'password'=>Hash::make($request->password),
                 'emp_name'=>$emp_name,
@@ -280,12 +298,29 @@ class AuthController extends Controller
                 'created_at'=>$currentDateTime,
                 'updated_at'=>$currentDateTime
             ]);
-            $userData     = User::where('emp_id', '=', $request->emp_id)->first();
+
+            $sequirity_id=Sequirityvlunerability::create([
+                'user_id'=>$register->id,
+                'random_string'=>substr(uniqid(), 0,25)
+            ]);
+            $sequirity_refresh_token=Sequirityvlunerability::select('random_string')->where('id', $sequirity_id->id)->first();
+
+            $userData = User::with([
+            'branchDetails' => function ($query) {
+            $query->select('BranchID', 'BranchName'); // Replace with the actual columns you need
+            },
+            'baselocationDetails' => function ($query) {
+            $query->select('BranchID as branch_id', 'BranchName as branch_name', 'BranchCode as branch_code', 'BranchID'); // Include the foreign key to the user table
+            },
+            'gradeDetails' => function ($query) {
+            $query->select('GradeID as grade_id', 'GradeName as grade_name', 'GradeID'); // Include the foreign key to the user table
+            }
+            ])->where('emp_id', '=', $request->emp_id)->first();
 
             $userToken=JWTAuth::fromUser($userData);
             $token   = $this->createNewToken($userToken,$userData);
             $message="user verified successfully!";
-            return response()->json(['message'=>$message, 'statusCode' => $this-> successStatus,'data'=>$userData,'token'=>$token,'success' => 'success'], $this-> successStatus);    
+            return response()->json(['message'=>$message, 'statusCode' => $this-> successStatus,'data'=>$userData,'token'=>$token,'success' => 'success','refresh_token'=>$sequirity_refresh_token], $this-> successStatus);    
         }
     }
     public function getbranchid($string){
@@ -305,10 +340,84 @@ class AuthController extends Controller
    Date        :23/05/2024
    Description :  refresh token
 ****************************************/
-    public function refresh() 
+    public function refresh_token(Request $request)
     {
-        return $this->createNewToken(auth()->refresh());
-    }
+        $validator = Validator::make($request->all(), [
+                'random_string'  => 'required'
+        ]);
+        if ($validator->fails())
+        {
+            $errors  = json_decode($validator->errors());
+            $random_string=isset($errors->random_string[0])? $errors->random_string[0] : '';
+             if($random_string)
+            {
+              $msg = $random_string;
+            }
+            return response()->json(['message' =>$validator->errors(),'statusCode'=>422,'data'=>[],'success'=>'error'],200);
+        }
+        $checkexist = DB::table('sequirityvlunerability')->where('random_string', $request->random_string)->exists();
+        // if($checkexist==true)
+        // {
+        //     $token     = $request->bearerToken();
+        //     $vlunerability_id=DB::table('sequirityvlunerability')->where('random_string', $request->random_string)->first();
+        //     $new_token = auth()->tokenById($vlunerability_id->user_id);
+        //     // dd($new_token);
+        //     $data      = $this->createNewToken($new_token);
+        //     // $user=DB::table('users')->where('id', $request->user_id)->first();
+
+        //     $user = User::where('emp_id', '=', $request->emp_id)->first();
+
+        //     // dd($userData);
+        //     $newToken = JWTAuth::fromUser($user);
+        //     return response()->json(['statusCode' => $this-> successStatus,'data'=>$user,'token'=> $newToken,'success' => 'success'], $this-> successStatus);
+        // }
+
+        if ($checkexist == true) 
+        {
+            $token = $request->bearerToken();
+            $vulnerability = DB::table('sequirityvlunerability')->where('random_string', $request->random_string)->first();
+
+            if ($vulnerability) 
+            {
+                // Assuming you want to fetch the user associated with the vulnerability
+                $user = User::where('id', $vulnerability->user_id)->first();
+
+                if ($user) 
+                {
+                    // Generate a new token
+                    $newToken = JWTAuth::fromUser($user);
+
+                    return response()->json([
+                    'statusCode' => $this->successStatus,
+                    'data' => $user,
+                    'token' => $newToken,
+                    'success' => 'success'
+                    ], $this->successStatus);
+                } 
+                else 
+                {
+                    return response()->json([
+                    'statusCode' => 404,
+                    'message' => 'User not found'
+                    ], 404);
+                }
+            } else 
+            {
+                return response()->json([
+                'statusCode' => 404,
+                'message' => 'Vulnerability not found'
+                ], 404);
+            }
+        }
+
+
+
+        else
+        {
+            $error="User does not exist.";
+            return response()->json(['message'=>$error,'statusCode'=>401,'data'=>[],'success' => 'error'],$this-> successStatus);
+        }
+    }   
 /****************************************
    Date        :23/05/2024
    Description :  get user details
