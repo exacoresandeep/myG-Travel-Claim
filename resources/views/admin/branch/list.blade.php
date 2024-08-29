@@ -20,20 +20,20 @@
         <div class="dash-all">
             <div class="dash-table-all">        
                 <div class="sort-block">
-                    <a href="{{url('add_branch')}}" class="button_orange">Add Branch</a>
+                    <a href="{{url('add_branch')}}" class="btn btn-primary btn-search">Add Branch</a>
                 </div>
                 <table class="table table-striped branch-datatable" id="branch-datatable">
                     <thead>
                         <tr>
-                            <th width="10%">
+                            <th width="50px">
                                 <input type="checkbox" id="select-all">&nbsp;&nbsp;&nbsp;
                                 <button class="button_orange fa fa-trash" id="delete-selected"></button>
                             </th>
-                            <th width="100 px">Sl.</th>
+                            <th width="60px">Sl.</th>
                             <th width="">Branch Name</th>
                             <th width="160 px">Branch Code</th>
                             <th width="120 px">Status</th>
-                            <th width="180 px">Action</th>
+                            <th width="120 px">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -46,19 +46,29 @@
 
     <!-- Include JavaScript -->
     <script type="text/javascript">
-        @if(session()->has('message'))
-        swal({
-            title: "Success!",
-            text: "{{ session()->get('message') }}",
-            icon: "success",
-        });
-        @endif
+        $(document).ready(function(){
+           @if(session()->has('message'))
+
+           Swal.fire({
+                title: "Success!",
+                text: "{{ session()->get('message') }}",
+                icon: "success",
+            }).then(function() {
+                // Reload DataTable after SweetAlert confirmation
+                $('#branch-datatable').DataTable().ajax.reload();
+            });
+        //    swal({
+        //        title: "Success!",
+        //        text: "{{ session()->get('message') }}",
+        //        icon: "success",
+        //    });
+           @endif
         
         $('#select-all').on('change', function() {
             $('input[name="item_checkbox[]"]').prop('checked', $(this).prop('checked'));
         });
         
-        $(function () {
+        // $(function () {
             var table = $('.branch-datatable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -104,7 +114,7 @@
 
         function delete_branch_modal(id) {
             var id = id; 
-            swal({
+            Swal.fire({
                 title: 'Are you sure?',
                 text: "Are you sure you want to delete this branch?",
                 icon: 'warning',
@@ -119,14 +129,17 @@
                             "_token": "{{ csrf_token() }}",
                         },
                         success:function(data) {
-                            swal({
+                            Swal.fire({
                                 title: "Success!",
                                 text: "Branch has been deleted!..",
                                 icon: "success",
+                            }).then(function() {
+                                // Reload DataTable after SweetAlert confirmation
+                                $('#branch-datatable').DataTable().ajax.reload();
                             });
-                            setTimeout(function() {
-                                window.location.href = "{{url("branch")}}";
-                            }, 2000);
+                            // setTimeout(function() {
+                            //     window.location.href = "{{url("branch")}}";
+                            // }, 2000);
                         }
                     });
                 }

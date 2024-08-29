@@ -24,10 +24,14 @@ class ClaimManagement extends Model
         'user_id'
     ];
 
+    
 
     public function tripclaimdetails()
     {
         return $this->belongsTo(Tripclaimdetails::class, 'TripClaimID','TripClaimID');
+    }
+    public function tripclaimdetailsforclaim(){
+        return $this->hasMany(Tripclaimdetails::class, 'TripClaimID','TripClaimID');
     }
     public function sumTripClaimDetailsValue()
     {
@@ -45,6 +49,12 @@ class ClaimManagement extends Model
     {
         return $this->belongsTo(User::class,'ApproverID', 'id');
     }
+
+    public function usercodedetails()
+    {
+        return $this->belongsTo(User::class,'ApproverID', 'emp_id');
+    }
+    
     public function userdata()
     {
         return $this->belongsTo(User::class,'user_id', 'id');
@@ -52,6 +62,9 @@ class ClaimManagement extends Model
     
     public function triptypedetails()
     {
-        return $this->belongsTo(TripType::class, 'TripTypeID','TripTypeID');
+        return $this->belongsTo(Triptype::class, 'TripTypeID','TripTypeID');
     }
+
+    
+
 }

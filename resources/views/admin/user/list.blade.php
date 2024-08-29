@@ -23,15 +23,17 @@
                 <table class="table table-striped user-datatable" id="user-datatable">
                     <thead>
                         <tr>
-                            <th width="10%">
+                            <th width="">
                                 <input type="checkbox" id="select-all">&nbsp;&nbsp;&nbsp;
                                 <button class="button_orange fa fa-trash" id="delete-selected"></button>
                             </th>
-                            <th width="100 px">Sl.</th>
+                            <th width="">Sl.</th>
                             <th width="">Employee ID</th>
                             <th width="">Employee Name</th>
-                            <th width="">User Name</th>
+                            <th width="">Contact No</th>
                             <th width="">Email</th>
+                            <th width="">Grade</th>
+                            <th width="">Branch</th>
                             <th width="180 px">Action</th>
                         </tr>
                     </thead>
@@ -45,19 +47,23 @@
 
     <!-- Include JavaScript -->
     <script type="text/javascript">
+          $(document).ready(function(){
         @if(session()->has('message'))
-        swal({
+        Swal.fire({
             title: "Success!",
             text: "{{ session()->get('message') }}",
             icon: "success",
-        });
+        }).then(function() {
+                // Reload DataTable after SweetAlert confirmation
+                $('#user-datatable').DataTable().ajax.reload();
+            });
         @endif
         
         $('#select-all').on('change', function() {
             $('input[name="item_checkbox[]"]').prop('checked', $(this).prop('checked'));
         });
         
-        $(function () {
+        // $(function () {
             var table = $('.user-datatable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -83,8 +89,10 @@
                     },
                     { data: 'emp_id', name: 'emp_id' },
                     { data: 'emp_name', name: 'emp_name' },
-                    { data: 'user_name', name: 'user_name' },
+                    { data: 'emp_phonenumber', name: 'emp_phonenumber' },
                     { data: 'email', name: 'email' },
+                    { data: 'grade', name: 'grade' },
+                    { data: 'branch', name: 'branch' },
                    
                     { data: 'action', name: 'action', orderable: false, searchable: false }
                 ]
@@ -93,7 +101,7 @@
 
         function delete_user_modal(id) {
             var id = id; 
-            swal({
+            Swal.fire({
                 title: 'Are you sure?',
                 text: "Are you sure you want to delete this User?",
                 icon: 'warning',
@@ -108,14 +116,14 @@
                             "_token": "{{ csrf_token() }}",
                         },
                         success:function(data) {
-                            swal({
+                            Swal.fire({
                                 title: "Success!",
                                 text: "User has been deleted!..",
                                 icon: "success",
+                            }).then(function() {
+                                // Reload DataTable after SweetAlert confirmation
+                                $('#user-datatable').DataTable().ajax.reload();
                             });
-                            setTimeout(function() {
-                                window.location.href = "{{url("list_users")}}";
-                            }, 2000);
                         }
                     });
                 }
@@ -134,7 +142,7 @@
             });
 
             if (ids.length > 0) {
-                swal({
+                Swal.fire({
                     title: 'Are you sure?',
                     text: "Are you sure you want to delete this grade?",
                     icon: 'warning',
@@ -150,14 +158,14 @@
                                 _token: "{{ csrf_token() }}",
                             },
                             success: function(response) {
-                                swal({
+                                Swal.fire({
                                     title: "Success!",
                                     text: "Selected Users have been deleted!",
                                     icon: "success",
+                                }).then(function() {
+                                    // Reload DataTable after SweetAlert confirmation
+                                    $('#user-datatable').DataTable().ajax.reload();
                                 });
-                                setTimeout(function() {
-                                    window.location.href = "{{url('list_users')}}";
-                                }, 2000);
                             },
                             error: function(xhr, status, error) {
                                 console.error(xhr.responseText);
@@ -170,7 +178,7 @@
                     }
                 });
             } else {
-                swal({
+                Swal.fire({
                     title: "Error!",
                     text: "No items selected.",
                     icon: "error",

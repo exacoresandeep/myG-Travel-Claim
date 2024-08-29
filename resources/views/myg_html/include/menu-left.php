@@ -68,7 +68,7 @@
       <div class="card">
         <div class="card-header">
           <a class="collapsed card-link" href="claim-category-management.php">
-            <i class="fa fa-cube" aria-hidden="true"></i> Claim Category Management <i class="fa fa-caret-right second" aria-hidden="true"></i>
+            <i class="fa fa-cube" aria-hidden="true"></i> Claim  <i class="fa fa-caret-right second" aria-hidden="true"></i>
           </a>
         </div>
       </div>

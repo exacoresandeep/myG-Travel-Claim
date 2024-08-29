@@ -19,7 +19,7 @@
           <form method="POST" action="{{ url('add_subcategory_submit') }}">
             @csrf   
             <table class="table table-striped">        
-             <tr>
+             <!-- <tr>
                 <td>UomID<span style="color: red;">*</span></td>
                 <td width="10">:</td>
                 <td>
@@ -29,7 +29,7 @@
                       <strong>{{ $message }}</strong>
                     </span>
                   @enderror  
-                </td></tr>
+                </td></tr> -->
                <td>Category</td>
                 <td width="10">:</td>
                 <td>

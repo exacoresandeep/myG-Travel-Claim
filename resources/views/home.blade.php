@@ -6,7 +6,7 @@
 <meta name="description" content="">
 <meta name="author" content="">
 
-<title>MyG :: Claim Management Application</title>
+<title>MyG :: Claim Management Applicationww</title>
 @include("admin.include.header")
 
 <!-- <div class="main-content"> -->
@@ -18,30 +18,30 @@
       <div class="dashbox-in">
         <div class="dashbox"> 
           <i class="fa fa-files-o" aria-hidden="true"></i>
-          <h4>4520</h4>
+          <h4>{{ $totalClaims }}</h4>
         </div>
         <h3>Claim requests</h3>
       </div>
       <div class="dashbox-in">
         <div class="dashbox"> 
           <i class="fa fa-minus-square" aria-hidden="true"></i>
-          <h4>2700</h4>
+          <h4>{{ $pendingCount }}</h4>
         </div>
         <h3>Claim pending</h3>
       </div>
       <div class="dashbox-in">
         <div class="dashbox"> 
           <i class="fa fa-check-square" aria-hidden="true"></i>
-          <h4>700</h4>
+          <h4>{{ $settledCount }}</h4>
         </div>
         <h3>Claim settled</h3>
       </div>
       <div class="dashbox-in">
         <div class="dashbox"> 
           <i class="fa fa-chain-broken" aria-hidden="true"></i>
-          <h4>2100</h4>
+          <h4>{{ $approvedCount }}</h4>
         </div>
-        <h3>Pending Approval</h3>
+        <h3>Approved</h3>
       </div>      
     </div>
     <div class="dash-other">

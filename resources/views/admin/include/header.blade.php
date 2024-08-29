@@ -19,12 +19,12 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
 
 
-<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js" integrity="sha512-BkpSL20WETFylMrcirBahHfSnY++H2O1W+UnEEO4yNIl+jI2+zowyoGJpbtk6bx97fBXf++WJHSSK2MV4ghPcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js" integrity="sha512-BkpSL20WETFylMrcirBahHfSnY++H2O1W+UnEEO4yNIl+jI2+zowyoGJpbtk6bx97fBXf++WJHSSK2MV4ghPcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <style type="text/css">
         /* Custom styles for DataTables pagination */
         .dataTables_wrapper .dataTables_paginate .paginate_button.previous,
@@ -56,11 +56,12 @@
         .button_orange:hover {
             background-color: #E95815;
             color: white;
+            text-decoration:none;
         }
         .menu-container {
             position: absolute;
             height:500px;
-            background-color: #fff;
+            background-color: #111;
             border-right: 1px solid #ccc;
             overflow-y: auto;
             width: 100%;
@@ -96,12 +97,12 @@
             </a>
             <span class="dropdown">      
                 <a class="dropdown-toggle" data-toggle="dropdown">
-                    <img src="images/myg-logo.png"> <span>{{ Auth::user()->emp_name }}</span>
+                    <img src="{{asset('images/myg-logo.png')}}"> <span>{{ Auth::user()->emp_name }}</span>
                 </a>
                 <div class="dropdown">
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item" href="{{ url('view_user/'.Auth::user()->id) }}">User Profile</a>
-                        <a class="dropdown-item" href="settings.php">Settings</a>
+                        <!-- <a class="dropdown-item" href="settings.php">Settings</a> -->
                         <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                             @csrf

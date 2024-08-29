@@ -43,10 +43,9 @@ class  UserController extends Controller
 	        ];
 	        $orderColumn = $columns[$orderColumnIndex] ?? 'BranchID';
 	        
-	        $query = User::where(function($q) use ($searchValue) {
+	        $query = User::with('branchData')->where(function($q) use ($searchValue) {
                            $q->where('emp_id', 'like', '%'.$searchValue.'%')
                            ->orWhere('emp_name', 'like', '%'.$searchValue.'%')
-                           ->orWhere('user_name', 'like', '%'.$searchValue.'%')
                            ->orWhere('email', 'like', '%'.$searchValue.'%');
                        })
                        ->orderBy($orderColumn, $orderBy);
@@ -60,8 +59,10 @@ class  UserController extends Controller
 	            return [
 	                'emp_id' => $row->emp_id,
 	                'emp_name' => $row->emp_name,
-                  'user_name'=>$row->user_name,
-                  'email'=>$row->email,
+                    'grade'=>$row->emp_grade,
+                    'branch'=> optional($row->branchData)->BranchName,
+                    'email'=>$row->email,
+                    'emp_phonenumber'=>$row->emp_phonenumber,
 
 	                'action' => '<a href="' . route('view_user', $row->id) .'"><i class="fa fa-eye button_orange" aria-hidden="true"></i></a><a href="' . route('edit_user', $row->id) .'"><i class="fa fa-pencil-square-o button_orange" aria-hidden="true"></i></a><a onclick="delete_user_modal(\'' . $row->id . '\')"><i class="fa fa-trash button_orange" aria-hidden="true"></i></a>',
 	                'checkbox' => '<input type="checkbox" name="item_checkbox[]" value="' . $row->id. '">',
@@ -84,7 +85,7 @@ class  UserController extends Controller
 ***************************************/
     public function view_user($id)
     {
-    	$data=User::with('branchData')->where('id', $id)->first();
+    	$data=User::with('branchData','baselocationDetails')->where('id', $id)->first();
     	return view('admin.user.view',compact('data'));
     }
 /***************************************
@@ -107,7 +108,7 @@ class  UserController extends Controller
         User::where('id',$req->id)->update([
           'emp_id'=>$req->emp_id,
           'emp_name'=>$req->emp_name,
-          'user_name'=>$req->user_name,
+        //   'user_name'=>$req->user_name,
           'email'=>$req->email,
           'emp_phonenumber'=>$req->emp_phonenumber,
           'emp_department'=>$req->emp_department,

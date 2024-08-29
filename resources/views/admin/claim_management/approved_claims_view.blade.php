@@ -14,7 +14,7 @@
   <div class="main-area">    
     <div class="claim-cover">
       <div class="back-btn">
-        <a href="/approved_claims">
+        <a href="{{ config('src_url') }}/approved_claims">
           <i class="fa fa-long-arrow-left" aria-hidden="true"></i> Back
         </a>
       </div>
@@ -23,7 +23,7 @@
           <tr>
             <th width="300">Trip ID</th>
             <td width="20">:</td>
-            <td>{{$data->TripClaimID}}</td>
+            <td>{{ 'TMG' . substr($data->TripClaimID, 8) }}</td>
           </tr>
           <tr>
             <th>Date</th>
@@ -33,21 +33,25 @@
           <tr>
             <th>Employee ID/Name</th>
             <td width="20">:</td>
-            <td>{{$data->userdata->emp_id}}/{{$data->userdata->emp_name}}</td>
+            <td>{{$data->userdata->emp_id}} / {{$data->userdata->emp_name}}</td>
           </tr>
           <tr>
             <th>Base Location</th>
             <td width="20">:</td>
-            <td>@if($data->userdetails && $data->userdetails->baselocationDetails)
-            {{$data->userdetails->baselocationDetails->BranchName}}/{{$data->userdetails->baselocationDetails->BranchCode}}
-        @else
-            N/A
-        @endif</td>
-          </tr>
+            <td>
+              
+                @if($data->userdata && $data->userdata->baselocationDetails)
+                    {{ $data->userdata->baselocationDetails->BranchName }} / {{ $data->userdata->baselocationDetails->BranchCode }}
+                @else
+                
+                    N/A
+                @endif
+            </td>
+        </tr>
           <tr>
             <th>Claim Interval</th>
             <td width="20">:</td>
-            <td>01/05/2024-15/05/2024</td>
+            <td>{{ $interval }}</p></td>
           </tr>
           <tr>
             <th>Type of Trip</th>
@@ -57,12 +61,14 @@
           <tr>
             <th>Branch Name</th>
             <td width="20">:</td>
-            <td>@if($data->userdetails && $data->userdetails->branchData)
-            {{$data->userdetails->branchData->BranchName}}/{{$data->userdetails->branchData->BranchCode}}
-        @else
-            N/A
-        @endif</td>
-          </tr>
+            <td>
+                @if($data->userdata && $data->userdata->branchData)
+                    {{ $data->userdata->branchData->BranchName }} / {{ $data->userdata->branchData->BranchCode }}
+                @else
+                    N/A
+                @endif
+            </td>
+        </tr>
           <tr>
             <th>Purpose of Trip</th>
             <td width="20">:</td>
@@ -73,19 +79,25 @@
             <td width="20">:</td>
             <td><label>{{$data->Status}}</label></td>
           </tr>
+          @php
+              $formattedTotalValue = number_format($totalValue, 2, '.', '');
+          @endphp
+
           <tr>
-            <th>Total Amount</th>
-            <td width="20">:</td>
-            <td><span class="amount text-primary"><b>{{ $totalValue }} INR</b></span></td>
+              <th>Total Amount</th>
+              <td width="20">:</td>
+              <td><span class="amount text-primary"><b>{{ $formattedTotalValue }} INR</b></span></td>
           </tr>
           <tr>
-            <th>Advance Amount</th>
-            <td width="20">:</td>
-            <td>@if($data->AdvanceAmount)
-            {{$data->AdvanceAmount}}
-        @else
-            N/A
-        @endif</td>
+              <th>Advance Amount</th>
+              <td width="20">:</td>
+              <td>
+                  @if($data->AdvanceAmount)
+                      {{ number_format($data->AdvanceAmount, 2, '.', '') }} INR
+                  @else
+                      0.00 INR
+                  @endif
+              </td>
           </tr>
         </table>
       </div>
@@ -95,7 +107,7 @@
           <tr>
             <th width="300">Reporting person name</th>
             <td width="20">:</td>
-            <td>{{$data->userdetails->emp_id}}/{{$data->userdetails->emp_name}}</td>
+            <td>{{ $data->usercodedetails->emp_name}} / {{ $data->usercodedetails->emp_id}}</td>
           </tr>
           <tr>
             <th>Date of approval</th>
@@ -123,8 +135,9 @@
       <h4 class="sub-heading">Claim Section</h4>
       <div class="category-section">
         <div id="accordion">
+
           <div class="card">
-            <div class="card-header" id="headingOne">
+            <div class="card-header">
               <h5 class="mb-0">
                 <button class="btn btn-link" data-toggle="collapse" data-target="#categoryOne" aria-expanded="true" aria-controls="categoryOne">
                   <span>Air Expenses</span><b>Total Amount : 15,000.00 INR</b>
@@ -210,6 +223,7 @@
               </div>
             </div>
           </div>
+
           <div class="card">
             <div class="card-header" id="headingTwo">
               <h5 class="mb-0">
@@ -269,6 +283,7 @@
               </div>
             </div>
           </div>
+
           <div class="card">
             <div class="card-header" id="headingThree">
               <h5 class="mb-0">
@@ -284,6 +299,7 @@
               </div>
             </div>
           </div>
+
           <div class="card">
             <div class="card-header" id="headingFour">
               <h5 class="mb-0">
@@ -299,6 +315,7 @@
               </div>
             </div>
           </div>
+
           <div class="card">
             <div class="card-header" id="headingFive">
               <h5 class="mb-0">
@@ -314,6 +331,7 @@
               </div>
             </div>
           </div>
+
           <div class="card">
             <div class="card-header" id="headingSix">
               <h5 class="mb-0">
@@ -329,6 +347,7 @@
               </div>
             </div>
           </div>
+
           <div class="card">
             <div class="card-header" id="headingSeven">
               <h5 class="mb-0">
@@ -344,6 +363,7 @@
               </div>
             </div>
           </div>
+
           <div class="card">
             <div class="card-header" id="headingEight">
               <h5 class="mb-0">
@@ -366,29 +386,43 @@
       <div class="bg-cover approver-section bg-grey">
         <table class="table">
           <tr>
-            <th width="300">Advance settled</th>
+            <th>Advance settled</th>
             <td width="20">:</td>
-            <td><b>15,000.00 INR</b></td>
-          </tr>
-          <tr>
-            <th>Amount to be settled</th>
+            <td><b>
+                @if($data->AdvanceAmount)
+                    {{ number_format($data->AdvanceAmount, 2, '.', '') }} INR
+                @else
+                    0.00 INR
+                @endif</b>
+            </td>
+        </tr>
+        <tr>
+            <th>Amount to be Settled</th>
             <td width="20">:</td>
-            <td><b>15,000.00 INR</b></td>
-          </tr>
+            <td>
+                @php
+                    $totalAmount = $totalValue;
+                    $advanceAmount = $data->AdvanceAmount ? $data->AdvanceAmount : 0;
+                    $amountToBeSettled = $totalAmount - $advanceAmount;
+                @endphp
+                <b>{{ number_format($amountToBeSettled, 2, '.', ',') }} INR</b>
+            </td>
+        </tr>
           <tr>
             <th>Approver ID</th>
             <td width="20">:</td>
-            <td>MYG1234</td>
+            <td>{{ Auth::user()->emp_id }}</td>
           </tr>
           <tr>
             <th>Approver name</th>
             <td width="20">:</td>
-            <td>Dilin</td>
+            <td>{{ Auth::user()->emp_name }}</td>
           </tr>
           <tr>
             <th>Date</th>
             <td width="20">:</td>
-            <td>16/05/2024</td>
+            <td><?php date_default_timezone_set('Asia/Kolkata'); ?>
+            <?php echo date('d-m-Y')?></td>
           </tr>
           <tr>
             <th>Comments</th>

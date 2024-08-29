@@ -14,7 +14,7 @@
   <div class="main-area">    
     <div class="claim-cover">
       <div class="back-btn">
-        <a href="#">
+        <a href="{{ config('src_url') }}/settled_claims">
           <i class="fa fa-long-arrow-left" aria-hidden="true"></i> Back
         </a>
       </div>
@@ -23,22 +23,26 @@
           <tr>
             <th width="300">Trip ID</th>
             <td width="20">:</td>
-            <td>#TID200300</td>
+            <td>{{ 'TMG' . substr($data->TripClaimID, 8) }}</td>
           </tr>
           <tr>
             <th>Date</th>
             <td width="20">:</td>
-            <td>01/05/2024</td>
+            <td><?php echo date('d-m-Y', strtotime($data->created_at));?></td>
           </tr>
           <tr>
             <th>Employee ID/Name</th>
             <td width="20">:</td>
-            <td>John/MYG5001</td>
+            <td>{{$data->userdata->emp_id}}/{{$data->userdata->emp_name}}</td>
           </tr>
           <tr>
             <th>Base Location</th>
             <td width="20">:</td>
-            <td>Calicut/MYG001</td>
+            <td>@if($data->userdetails && $data->userdetails->baselocationDetails)
+            {{$data->userdetails->baselocationDetails->BranchName}}/{{$data->userdetails->baselocationDetails->BranchCode}}
+        @else
+            N/A
+        @endif</td>
           </tr>
           <tr>
             <th>Claim Interval</th>
@@ -48,32 +52,40 @@
           <tr>
             <th>Type of Trip</th>
             <td width="20">:</td>
-            <td>Inauguration</td>
+            <td>{{$data->triptypedetails->TripTypeName}}</td>
           </tr>
           <tr>
             <th>Branch Name</th>
             <td width="20">:</td>
-            <td>Calicut/MYG0001</td>
+            <td>@if($data->userdetails && $data->userdetails->branchData)
+            {{$data->userdetails->branchData->BranchName}}/{{$data->userdetails->branchData->BranchCode}}
+        @else
+            N/A
+        @endif</td>
           </tr>
           <tr>
             <th>Purpose of Trip</th>
             <td width="20">:</td>
-            <td>Eranakulam branch inaguration</td>
+            <td>{{$data->TripPurpose}}</td>
           </tr>
           <tr>
             <th>Status</th>
             <td width="20">:</td>
-            <td><label>Recieved</label></td>
+            <td><label>{{$data->Status}}</label></td>
           </tr>
           <tr>
             <th>Total Amount</th>
             <td width="20">:</td>
-            <td><span class="amount text-primary"><b>20,000 INR</b></span></td>
+            <td><span class="amount text-primary"><b>{{ $totalValue }} INR</b></span></td>
           </tr>
           <tr>
             <th>Advance Amount</th>
             <td width="20">:</td>
-            <td>15,000 INR</td>
+            <td>@if($data->AdvanceAmount)
+            {{$data->AdvanceAmount}}
+        @else
+            N/A
+        @endif</td>
           </tr>
         </table>
       </div>
@@ -83,17 +95,28 @@
           <tr>
             <th width="300">Reporting person name</th>
             <td width="20">:</td>
-            <td>Krishnakumar/MYG500900</td>
+            <td></td>
           </tr>
           <tr>
             <th>Date of approval</th>
             <td width="20">:</td>
-            <td>16/05/2024</td>
+            <td>
+            <?php 
+              if($data->ApprovalDate)
+                echo date('d-m-Y', strtotime($data->created_at));
+              else
+                echo 'NA';
+            ?></td>
           </tr>
           <tr>
             <th>Comments</th>
             <td width="20">:</td>
-            <td>Your claims has been approved.</td>
+            <td><?php 
+              if($data->ApproverRemarks)
+                echo $data->ApproverRemarks;
+              else
+                echo '';
+            ?></td>
           </tr>          
         </table>
       </div>
@@ -339,7 +362,7 @@
         </div>
       </div>
       <!-- Finance Approval Section --->
-      <h4 class="sub-heading">Finance user Approval Section</h4>
+      <!-- <h4 class="sub-heading">Finance user Approval Section</h4>
       <div class="bg-cover approver-section bg-grey">
         <table class="table">
           <tr>
@@ -385,7 +408,7 @@
             </td>
           </tr>
         </table>
-      </div>
+      </div> -->
     </div>
   </div>
 

@@ -81,16 +81,4 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsTo(Branch::class, 'emp_baselocation','BranchID');
     } 
-    // public function getEmpBranchAttribute()
-    // {
-    //     return $this->branchDetails ? $this->branchDetails->BranchName : null;
-    // }
-
-    // /**
-    //  * Accessor for the emp_baselocation attribute.
-    //  */
-    // public function getEmpBaselocationAttribute()
-    // {
-    //     return $this->baselocationDetails ? $this->baselocationDetails->BranchName : null;
-    // }
 }

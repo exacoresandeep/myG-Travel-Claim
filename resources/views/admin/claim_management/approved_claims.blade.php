@@ -6,32 +6,16 @@
 <meta name="description" content="">
 <meta name="author" content="">
 
-<title>All Claim Requests :: MyG</title>
+<title>All Approved Claims :: MyG</title>
 @include("admin.include.header")
 
 @include("admin.include.sidebar-menu")
 <div class="main-area">
-    <h2 class="main-heading">Approved Claims</h2>
+    <h2 class="main-heading">All Approved Claims</h2>
     <div class="dash-all">
       <div class="dash-table-all">        
         <div class="sort-block">
-          <!-- <div class="show-num">
-            <span>Show</span>
-            <select class="select">
-              <option>20</option>
-              <option>50</option>
-              <option>100</option>
-            </select>
-            <span>Entries</span>
-          </div>  
-          <a href="" class="btn btn-primary">Delete</a>
-          <div class="sort-by ml-auto">
-            <select class="select">
-              <option>Select</option>
-              <option>Sort by latest</option>
-              <option>Sort by oldest</option>
-            </select>
-          </div>-->
+         
         </div>
         <table class="table table-striped approved-claim-table" id="approved-claim-table">
           <thead>            
@@ -48,18 +32,10 @@
            
           </tbody>
         </table>
-        <!-- <div class="pagination-block">
-          <ul class="pagination pagination-sm justify-content-end">
-            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-          </ul>
-        </div> -->
+       
       </div>
     </div>
-  </>
+ 
   
 </div>
 
@@ -112,20 +88,23 @@
                        name: 'id', 
                        render: function(data, type, row, meta) {
                            return meta.row + 1; // meta.row is zero-based index
-                       }
+                       },
+                       className: 'text-center'
                    },
-                   { data: 'TripClaimID', name: 'TripClaimID' },
+                   { 
+                        data: 'TripClaimID', 
+                        name: 'TripClaimID', 
+                        render: function(data, type, row) {
+                            // Modify the TripClaimID to add 'TMG' and remove the first 8 characters
+                            return 'TMG' + data.substring(8);
+                        }
+                    },
                    { data: 'created_at', name: 'created_at' },
-                   { data: 'ApproverID', name: 'ApproverID' },
+                   { data: 'UserData', name: 'UserData' },
                    { data: 'VisitBranchID', name: 'VisitBranchID' },
                    { data: 'TripTypeID', name: 'TripTypeID' },
-                   { data: 'AdvanceAmount', name: 'AdvanceAmount' },
-                   { data: 'action', name: 'action', orderable: false, searchable: false, 
-                      render: function(data, type, row) {
-                        var viewUrl = '/approved_claims_view/' + row.TripClaimID;
-                        return '<a href="'+viewUrl+'" class="btn btn-primary"><i class="fa fa-eye" aria-hidden="true"></i> View</a><a href="javascript:void(0);" onclick="openCompleteModal(\'' + row.TripClaimID + '\')" class="btn btn-success"><i class="fa fa-check-square" aria-hidden="true"></i> Mark as Complete</a>';
-                      }
-                    }
+                   { data: 'TotalAmount', name: 'TotalAmount', className: 'text-right'},
+                   { data: 'action', name: 'action', orderable: false, searchable: false}
                ]
            });
 
@@ -181,10 +160,6 @@
           $('#markCompleteModal').modal('show');
       }
 
-      
-
-   
-      
        </script>
  
 @include("admin.include.footer")

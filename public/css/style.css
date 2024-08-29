@@ -11,6 +11,18 @@ body {
   padding-bottom: 42px;
   height: 100%;
 }
+.card-header .card-link.active,
+.card-body a.active {
+    color: #E95815 !important;
+}
+
+.card-header .card-link.active i,
+.card-body a.active i {
+    color: #E95815 !important;
+}
+.table-striped{
+  width:100%;
+}
 .table{
   width:100%;
 }
