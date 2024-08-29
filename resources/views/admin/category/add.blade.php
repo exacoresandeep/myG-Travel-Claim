@@ -16,7 +16,7 @@
       <h2 class="main-heading">Add Category</h2>  
       <div class="dash-all pt-0">
         <div class="dash-table-all" style="max-width:700px;">  
-          <form method="POST" action="{{ url('add_subcategory_submit') }}">
+          <form method="POST" action="{{ url('add_category_submit') }}">
             @csrf   
             <table class="table table-striped">        
              

@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class SubCategories extends Model
 {
+    public function category() {
+        return $this->belongsTo(Category::class, 'CategoryID', 'CategoryID');
+    }
     public $table="myg_04_subcategories";
     protected $fillable = [
         'SubCategoryID',
@@ -32,9 +35,10 @@ class SubCategories extends Model
         return $this->hasMany(UOM::class, 'UomID', 'UomID');
     }
 
-
     public function categorydata()
     {
         return $this->hasOne(Category::class, 'CategoryID','CategoryID');
     }
+
+    
 }

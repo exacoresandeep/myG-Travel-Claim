@@ -6,7 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>All Categorys</title>
+    <title>All Categories</title>
     @include("admin.include.header")
 </head>
 <body>

@@ -3,6 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\ClaimManagement;
+use Auth;
+use DB;
+use DatePeriod;
+use DateInterval;
+use DateTime;
+use Carbon\Carbon; // Import Carbon
 
 class ClaimController extends Controller
 {
@@ -16,7 +23,8 @@ class ClaimController extends Controller
 **********************************************/    
     public function index()
     {
-        return view('admin.claim.request_claim');
+        
+        return view('admin.claim_management.requested_claims');
     }
 /**********************************************
    Date        : 28/06/2024
@@ -24,6 +32,6 @@ class ClaimController extends Controller
 **********************************************/  
     public function view()
     {
-        return view('admin.claim.view');
+        return view('admin.claim_management.requested_claims_view');
     }
 }

@@ -88,7 +88,7 @@ class  CategoryController extends Controller
 ***************************************/    
     public function submit(Request $req)
     {
-    	// dd($req);
+    	
 		$req->merge([
 			'TripFrom' => $req->has('TripFrom') ? $req->TripFrom : 0,
 			'TripTo' => $req->has('TripTo') ? $req->TripTo : 0,
@@ -104,6 +104,7 @@ class  CategoryController extends Controller
 		], [
 			'CategoryName.required' => 'Please enter the category name.',
 		]);
+// dd($req);
 		$CategoryData=Category::create([
 			'CategoryName'=>$req->CategoryName,
 			'TripFrom'=>$req->TripFrom,
@@ -209,7 +210,7 @@ class  CategoryController extends Controller
 	        $columns = [
 	            'SubCategoryID',
 	            'created_at',
-	            'UomID',
+	            // 'UomID',
 	            'CategoryID',
 	            'SubCategoryName',
 	            'Status'
@@ -219,7 +220,7 @@ class  CategoryController extends Controller
 	        $query = SubCategories::with('categorydata')->where('Status','1')
 	                        ->where(function($q) use ($searchValue) {
                            $q->where('SubCategoryName', 'like', '%'.$searchValue.'%')
-                            ->orWhere('UomID', 'like', '%'.$searchValue.'%')
+                            // ->orWhere('UomID', 'like', '%'.$searchValue.'%')
 							->orWhere('CategoryID', 'like', '%'.$searchValue.'%')
 							->orWhere('SubCategoryName', 'like', '%'.$searchValue.'%');
                        })
@@ -233,7 +234,7 @@ class  CategoryController extends Controller
 	        {
 	            return [
 	                'SubCategoryID' => $row->SubCategoryID,
-	                'UomID' => $row->UomID,
+	                // 'UomID' => $row->UomID,
 	                'CategoryID' => $row->categorydata->CategoryName ?? 'N/A', // Handle null CategoryName
 	                'SubCategoryName'=>$row->SubCategoryName,
 	                'action' => '<a href="' . route('view_subcategory', $row->SubCategoryID) .'"><i class="fa fa-eye button_orange" aria-hidden="true"></i></a><a href="' . route('edit_subcategory', $row->SubCategoryID) .'"><i class="fa fa-pencil-square-o button_orange" aria-hidden="true"></i></a><a onclick="delete_subcategory_modal(\'' . $row->SubCategoryID . '\')"><i class="fa fa-trash button_orange" aria-hidden="true"></i></a>',
@@ -268,15 +269,15 @@ class  CategoryController extends Controller
     {
 
 		$validatedData = $req->validate([
-			'UomID' => 'required|integer',
+			// 'UomID' => 'required|integer',
 			'SubCategoryName'=>'required',
 
 		], [
-			'UomID.required' => 'Please enter the UomID.',
+			// 'UomID.required' => 'Please enter the UomID.',
 			'SubCategoryName.required' => 'Please enter the sub-categorys.',
 		]);
 		$SubCategoriesData=SubCategories::create([
-			'UomID'=>$req->UomID,
+			'UomID'=>1,
 			'CategoryID'=>$req->Category,
 			'SubCategoryName'=>$req->SubCategoryName,
 			'user_id'=>Auth::user()->id,
