@@ -16,7 +16,7 @@
     @include("admin.include.sidebar-menu")
     
     <div class="main-area">
-        <h2 class="main-heading">All Branchs</h2>
+        <h2 class="main-heading">All Branches</h2>
         <div class="dash-all">
             <div class="dash-table-all">        
                 <div class="sort-block">

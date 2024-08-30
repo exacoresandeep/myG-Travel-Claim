@@ -3,7 +3,7 @@ namespace App\Models;
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DB;
-use App\Models\TripClaim;
+use App\Models\Tripclaim;
 
 class HomeController extends Controller
 {
@@ -24,12 +24,12 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $totalClaims = TripClaim::count();
+        $totalClaims = Tripclaim::count();
 
         // Get counts for specific statuses
-        $pendingCount = TripClaim::where('Status', 'pending')->count();
-        $approvedCount = TripClaim::where('Status', 'approved')->count();
-        $settledCount = TripClaim::where('Status', 'Paid')->count();
+        $pendingCount = Tripclaim::where('Status', 'pending')->count();
+        $approvedCount = Tripclaim::where('Status', 'approved')->count();
+        $settledCount = Tripclaim::where('Status', 'Paid')->count();
         return view('home', compact('totalClaims', 'pendingCount', 'approvedCount', 'settledCount'));
     }
 }

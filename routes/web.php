@@ -168,5 +168,12 @@ Route::get('/view_user/{id}', [App\Http\Controllers\TripController::class, 'view
 
 
 Route::get('/role-management', [App\Http\Controllers\RoleController::class, 'index'])->name('role-management');
-Route::get('/assign-role-management', [App\Http\Controllers\RoleController::class, 'assign'])->name('assign-role-management');
+Route::get('/roleList', [App\Http\Controllers\RoleController::class, 'roleList'])->name('roleList');
+Route::get('/edit_role/{id}', [App\Http\Controllers\RoleController::class, 'edit_role'])->name('edit_role');
+Route::get('/delete_role/{id}', [App\Http\Controllers\RoleController::class, 'delete_role'])->name('delete_role');
+Route::get('/add_role', [App\Http\Controllers\RoleController::class, 'add_role'])->name('add_role');
+Route::post('/add_role_submit', [App\Http\Controllers\RoleController::class, 'add_role_submit'])->name('add_role_submit');
+Route::post('/edit_role_submit', [App\Http\Controllers\RoleController::class, 'edit_role_submit'])->name('edit_role_submit');
+Route::get('/search_role_user', [App\Http\Controllers\RoleController::class, 'search_role_user'])->name('search_role_user');
+Route::post('/delete_multi_role', [App\Http\Controllers\RoleController::class, 'delete_multi_role'])->name('delete_multi_role'); 
 

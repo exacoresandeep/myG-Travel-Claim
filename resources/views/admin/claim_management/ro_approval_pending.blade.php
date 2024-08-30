@@ -104,12 +104,12 @@
                    { data: 'VisitBranchID', name: 'VisitBranchID' },
                    { data: 'TripTypeID', name: 'TripTypeID' },
                    { data: 'TotalAmount', name: 'TotalAmount', className: 'text-right'},
-                   { data: 'action', name: 'action', orderable: false, searchable: false, 
-                      render: function(data, type, row) {
-                        var viewUrl = '/ro_approval_pending_view/' + row.TripClaimID;
-                        return '<a href="'+viewUrl+'" class="btn btn-primary"><i class="fa fa-eye" aria-hidden="true"></i> View</a>';
-                      }
-                    }
+                   { data: 'action', name: 'action', orderable: false, searchable: false}
+                    //   render: function(data, type, row) {
+                    //     var viewUrl = '/ro_approval_pending_view/' + row.TripClaimID;
+                    //     return '<a href="'+viewUrl+'" class="btn btn-primary"><i class="fa fa-eye" aria-hidden="true"></i> View</a>';
+                    //   }
+                    // }
                ]
            });
 

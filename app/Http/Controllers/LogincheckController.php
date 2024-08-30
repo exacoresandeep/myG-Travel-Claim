@@ -28,7 +28,9 @@ class LogincheckController extends Controller
           'password.required' => 'Please enter the password.',
         ]);
         $credentials = $req->only('username', 'password');
-        $check_exist=User::where('emp_id',$req->username)->exists();
+        $check_exist=User::where('emp_id',$req->username)
+        ->whereIn('emp_role',['Finance','Super Admin','HR & Admin','CMD','Auditor'])
+        ->exists();
         $user = User::where('emp_id', $credentials['username'])->first();
         if($check_exist!=true)
         {

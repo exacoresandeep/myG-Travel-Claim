@@ -64,6 +64,46 @@ class ClaimManagementController extends Controller
 	        ], 200);
 	    }
     }
+	public function approved_claims_view($id)
+    {
+        $data=ClaimManagement::with(['visitbranchdetails', 'usercodedetails', 'triptypedetails', 'userdata.branchDetails', 'userdata.baselocationDetails', 'tripclaimdetails','tripclaimdetailsforclaim'])
+                                ->where('TripClaimID', $id)
+                                ->first();
+
+								
+        if (!$data) {
+            return redirect()->back()->withErrors(['error' => 'Claim not found']);
+        }
+		
+		$totalValue = $data->sumTripClaimDetailsValue();
+		$claimDetails = $data->tripclaimdetailsforclaim->toArray();
+		$dates = $this->extractDate($claimDetails);
+
+		if (empty($dates)) {
+			$interval = 'N/A'; // Or any default value you want to set
+		} else {
+			// Calculate interval for display purposes
+			$fromDate = min($dates);
+			$toDate = max($dates);
+			$interval = "{$fromDate} to {$toDate}";
+		}
+
+		return view('admin.claim_management.approved_claims_view', compact('data', 'totalValue', 'interval', 'dates'));
+    }
+	public function complete_approved_claim(Request $request)
+    {
+        $TripClaimID = $request->TripClaimID;
+        // Perform the status change operation here
+        
+        $affected = ClaimManagement::where('TripClaimID', $TripClaimID)
+                               ->update(['Status' => 'Paid']);
+        if ($affected) {
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false]);
+        }
+    }
+
     public function requested_claims()
     {
         return view('admin.claim_management.approved_claims');
@@ -117,50 +157,9 @@ class ClaimManagementController extends Controller
 	        ], 200);
 	    }
     }
-
-    public function complete_approved_claim(Request $request)
+	public function requested_claims_view($id)
     {
-        $TripClaimID = $request->TripClaimID;
-        // Perform the status change operation here
-        
-        $affected = ClaimManagement::where('TripClaimID', $TripClaimID)
-                               ->update(['Status' => 'Paid']);
-        if ($affected) {
-            return response()->json(['success' => true]);
-        } else {
-            return response()->json(['success' => false]);
-        }
-    }
-
-	public function approved_claims_view($id)
-    {
-        $data=ClaimManagement::with(['visitbranchdetails', 'usercodedetails', 'triptypedetails', 'userdata.branchDetails', 'userdata.baselocationDetails', 'tripclaimdetails','tripclaimdetailsforclaim'])
-                                ->where('TripClaimID', $id)
-                                ->first();
-
-								
-        if (!$data) {
-            return redirect()->back()->withErrors(['error' => 'Claim not found']);
-        }
-		
-		$totalValue = $data->sumTripClaimDetailsValue();
-		$claimDetails = $data->tripclaimdetailsforclaim->toArray();
-		$dates = $this->extractDate($claimDetails);
-
-		if (empty($dates)) {
-			$interval = 'N/A'; // Or any default value you want to set
-		} else {
-			// Calculate interval for display purposes
-			$fromDate = min($dates);
-			$toDate = max($dates);
-			$interval = "{$fromDate} to {$toDate}";
-		}
-
-		return view('admin.claim_management.approved_claims_view', compact('data', 'totalValue', 'interval', 'dates'));
-    }
-    public function requested_claims_view($id)
-    {
-        $data=ClaimManagement::with(['visitbranchdetails', 'usercodedetails', 'triptypedetails', 'userdata.branchDetails', 'userdata.baselocationDetails', 'tripclaimdetails','tripclaimdetailsforclaim'])
+        $data=ClaimManagement::with(['visitbranchdetails', 'usercodedetails', 'triptypedetails', 'userdata', 'tripclaimdetails','tripclaimdetailsforclaim'])
                                 ->where('TripClaimID', $id)
                                 ->first();
 
@@ -184,6 +183,9 @@ class ClaimManagementController extends Controller
 		}
 		return view('admin.claim_management.requested_claims_view', compact('data', 'totalValue', 'interval', 'dates'));
     }
+    
+	
+    
 
     private function extractDate($claimDetails)
     {
@@ -419,7 +421,7 @@ class ClaimManagementController extends Controller
 					'VisitBranchID' => ($row->visitbranchdetails->BranchName ?? 'N/A') . '/' . ($row->visitbranchdetails->BranchCode ?? 'N/A'),
 					'TripTypeID' => $row->triptypedetails->TripTypeName ?? 'N/A',
 					'TotalAmount' => $TotalAmount,
-					'action' => '<a href="'. route('rejected_claims_view', $row->TripClaimID).'" class="btn btn-primary"><i class="fa fa-eye" aria-hidden="true"></i> View</a>',
+					'action' => '<a href="'. route('ro_approval_pending_view', $row->TripClaimID).'" class="btn btn-primary"><i class="fa fa-eye" aria-hidden="true"></i> View</a>',
 					
 				];
 			});
