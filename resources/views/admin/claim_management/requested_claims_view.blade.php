@@ -14,7 +14,7 @@
   <div class="main-area">    
     <div class="claim-cover">
       <div class="back-btn">
-        <a href="{{ config('src_url') }}/claim_request">
+      <a href="{{ url('claim_request')}}">
           <i class="fa fa-long-arrow-left" aria-hidden="true"></i> Back
         </a>
       </div>
@@ -40,9 +40,9 @@
             <td width="20">:</td>
             <td>@if($data->userdetails && $data->userdetails->baselocationDetails)
             {{$data->userdetails->baselocationDetails->BranchName}}/{{$data->userdetails->baselocationDetails->BranchCode}}
-        @else
-            N/A
-        @endif</td>
+              @else
+                  N/A
+              @endif</td>
           </tr>
           <tr>
             <th>Claim Interval</th>
@@ -133,7 +133,32 @@
                 </button>
               </h5>
             </div>
+            <?php 
+//             dd($data->tripclaimdetails);->$groupedTripClaimDetails = $data->tripclaimdetails->groupBy('subcategoryid')->map(function ($items, $subcategoryid) {
+//     return [
+//         'subcategoryid' => $subcategoryid,
+//         'details' => $items
+//     ];
+// });
+            $mappedTripClaimDetails = $data->tripclaimdetailsforclaim->map(function ($detail) {
+              return [
+                  'TripClaimDetailID' => $detail->TripClaimDetailID,
+                  'PolicyID' => $detail->PolicyID,
+                  'UnitAmount' => $detail->UnitAmount,
+                  'NoOfPersons' => $detail->NoOfPersons,
+                  // Add more fields as needed
+              ];
+            });
 
+            // Example of looping through the mapped data
+            foreach ($mappedTripClaimDetails as $detail) {
+              echo "ID: " . $detail['TripClaimDetailID'] . "<br>";
+              echo "PolicyID: " . $detail['PolicyID'] . "<br>";
+              echo "Amount: " . $detail['UnitAmount'] . "<br>";
+              echo "NoOfPersons: " . $detail['NoOfPersons'] . "<br>";
+            }
+            
+            ?>
             <div id="categoryOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
               <div class="card-body">
                 <table class="table table-striped table-bordered">

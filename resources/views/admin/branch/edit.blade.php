@@ -6,13 +6,19 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>All Branchs :: DMS</title>
+    <title>All Branches :: DMS</title>
     @include("admin.include.header")
 </head>
 <body>
     @include("admin.include.sidebar-menu")
     <div class="main-area">
+        <div class="back-btn text-end">
+        <a href="{{ url('branch') }}">
+          <i class="fa fa-long-arrow-left" aria-hidden="true"></i> Back
+        </a>
+      </div>
         <h2 class="main-heading">Edit Branch</h2>
+        
         <div class="dash-all pt-0">
             <div class="dash-table-all" style="max-width:700px;">
                 <form method="POST" action="{{ url('update_branch_submit') }}">

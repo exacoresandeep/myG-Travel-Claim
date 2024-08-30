@@ -14,7 +14,7 @@
   <div class="main-area">    
     <div class="claim-cover">
       <div class="back-btn">
-        <a href="{{ config('src_url') }}/ro_approval_pending">
+      <a href="{{ url('ro_approval_pending')}}">
           <i class="fa fa-long-arrow-left" aria-hidden="true"></i> Back
         </a>
       </div>

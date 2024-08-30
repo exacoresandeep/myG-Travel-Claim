@@ -25,13 +25,13 @@
                 <table class="table table-striped triptype-datatable" id="triptype-datatable">
                     <thead>
                         <tr>
-                            <th width="">
+                            <th width="50px">
                                 <input type="checkbox" id="select-all">&nbsp;&nbsp;&nbsp;
                                 <button class="button_orange fa fa-trash" id="delete-selected"></button>
                             </th>
-                            <th width="">Sl.</th>
-                            <th width="">Trip Types</th>
-                            <th width="">Status</th>
+                            <th width="60px">Sl.</th>
+                            <th width="200px">Trip Types</th>
+                            <th width="120px">Status</th>
                             <th width="">Action</th>
                         </tr>
                     </thead>
@@ -45,23 +45,26 @@
 
     <!-- Include JavaScript -->
     <script type="text/javascript">
-         $(document).ready(function(){
-        @if(session()->has('message'))
-        Swal.fire({
-            title: "Success!",
-            text: "{{ session()->get('message') }}",
-            icon: "success",
-        }).then(function() {
-                // Reload DataTable after SweetAlert confirmation
-                $('#triptype-datatable').DataTable().ajax.reload();
-            });
-        @endif
+        $(document).ready(function(){
+            @if(session()->has('message'))
+            Swal.fire({
+                title: "Success!",
+                text: "{{ session()->get('message') }}",
+                icon: "success",
+            }).then(function() {
+                    // Reload DataTable after SweetAlert confirmation
+                    $('#triptype-datatable').DataTable().ajax.reload();
+                });
+            @endif
         
-        $('#select-all').on('change', function() {
-            $('input[name="item_checkbox[]"]').prop('checked', $(this).prop('checked'));
-        });
+            $('#select-all').on('change', function() {
+                $('input[name="item_checkbox[]"]').prop('checked', $(this).prop('checked'));
+            });
         
         // $(function () {
+            if ($.fn.DataTable.isDataTable('#category-datatable')) {
+                $('.triptype-datatable').DataTable().clear().destroy();
+            }
             var table = $('.triptype-datatable').DataTable({
                 processing: true,
                 serverSide: true,

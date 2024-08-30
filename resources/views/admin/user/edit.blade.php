@@ -13,7 +13,7 @@
     @include("admin.include.sidebar-menu")
     <div class="main-area">
         <div class="back-btn" id="back-button">
-            <a href="/list_users">
+            <a href="{{ url('list_users') }}">
             <i class="fa fa-long-arrow-left" aria-hidden="true"></i> Back
             </a>
         </div>

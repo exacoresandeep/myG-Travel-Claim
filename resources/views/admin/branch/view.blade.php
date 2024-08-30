@@ -17,8 +17,9 @@
   
   <div class="main-area">    
     <div class="claim-cover">
+      
       <div class="back-btn" id="back-button">
-        <a href="#">
+        <a href="{{ url('branch') }}">
           <i class="fa fa-long-arrow-left" aria-hidden="true"></i> Back
         </a>
       </div>

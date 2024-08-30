@@ -14,7 +14,7 @@
   <div class="main-area">    
     <div class="claim-cover">
       <div class="back-btn">
-        <a href="{{ config('src_url') }}/approved_claims">
+      <a href="{{ url('approved_claims')}}">
           <i class="fa fa-long-arrow-left" aria-hidden="true"></i> Back
         </a>
       </div>
@@ -135,7 +135,7 @@
       <h4 class="sub-heading">Claim Section</h4>
       <div class="category-section">
         <div id="accordion">
-
+    
           <div class="card">
             <div class="card-header">
               <h5 class="mb-0">
