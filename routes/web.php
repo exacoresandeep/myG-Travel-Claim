@@ -33,9 +33,31 @@ Route::get('/claim-view', [App\Http\Controllers\ClaimController::class, 'view'])
 
 ########################################################################################################
 
-Route::get('/claim_request', [App\Http\Controllers\ClaimController::class, 'index'])->name('claim_request');
-Route::get('/claim-view', [App\Http\Controllers\ClaimController::class, 'view'])->name('claim-view');
 
+Route::get('/requested_claims', [App\Http\Controllers\ClaimManagementController::class, 'requested_claims'])->name('requested_claims');
+Route::get('/requested_claims_list', [App\Http\Controllers\ClaimManagementController::class, 'requested_claims_list'])->name('requested_claims_list');
+Route::get('/requested_claims_view/{id}', [App\Http\Controllers\ClaimManagementController::class, 'requested_claims_view'])->name('requested_claims_view');
+
+Route::get('/approved_claims', [App\Http\Controllers\ClaimManagementController::class, 'approved_claims'])->name('approved_claims');
+Route::get('/approved_claims_list', [App\Http\Controllers\ClaimManagementController::class, 'approved_claims_list'])->name('approved_claims_list');
+Route::get('/approved_claims_view/{id}', [App\Http\Controllers\ClaimManagementController::class, 'approved_claims_view'])->name('approved_claims_view');
+Route::post('/complete_approved_claim', [App\Http\Controllers\ClaimManagementController::class, 'complete_approved_claim'])->name('complete_approved_claim');
+
+Route::get('/settled_claims', [App\Http\Controllers\ClaimManagementController::class, 'settled_claims'])->name('settled_claims');
+Route::get('/settled_claims_list', [App\Http\Controllers\ClaimManagementController::class, 'settled_claims_list'])->name('settled_claims_list');
+Route::get('/settled_claims_view/{id}', [App\Http\Controllers\ClaimManagementController::class, 'settled_claims_view'])->name('settled_claims_view');
+
+Route::get('/rejected_claims', [App\Http\Controllers\ClaimManagementController::class, 'rejected_claims'])->name('rejected_claims');
+Route::get('/rejected_claims_list', [App\Http\Controllers\ClaimManagementController::class, 'rejected_claims_list'])->name('rejected_claims_list');
+Route::get('/rejected_claims_view/{id}', [App\Http\Controllers\ClaimManagementController::class, 'rejected_claims_view'])->name('rejected_claims_view');
+
+Route::get('/ro_approval_pending', [App\Http\Controllers\ClaimManagementController::class, 'ro_approval_pending'])->name('ro_approval_pending');
+Route::get('/ro_approval_pending_list', [App\Http\Controllers\ClaimManagementController::class, 'ro_approval_pending_list'])->name('ro_approval_pending_list');
+Route::get('/ro_approval_pending_view/{id}', [App\Http\Controllers\ClaimManagementController::class, 'ro_approval_pending_view'])->name('ro_approval_pending_view');
+
+Route::get('/report_management', [App\Http\Controllers\ClaimManagementController::class, 'report_management'])->name('report_management');
+Route::get('/report_management_list', [App\Http\Controllers\ClaimManagementController::class, 'report_management_list'])->name('report_management_list');
+Route::get('/report_management_view/{id}', [App\Http\Controllers\ClaimManagementController::class, 'report_management_view'])->name('report_management_view');
 
 
 ##############################  branch details#########################################
@@ -53,6 +75,16 @@ Route::post('/delete_multi_branch', [App\Http\Controllers\BranchController::clas
 
 ########################################################################################################
 
+Route::get('/policy_management', [App\Http\Controllers\PolicyController::class, 'index'])->name('policy_management');
+Route::get('/get_policy_management_list', [App\Http\Controllers\PolicyController::class, 'policy_management_list'])->name('policy_management_list');
+Route::get('/add_policy_management', [App\Http\Controllers\PolicyController::class, 'add_policy_management'])->name('add_policy_management');
+Route::get('/view_policy_management/{id}', [App\Http\Controllers\PolicyController::class, 'view_policy_management'])->name('view_policy_management');
+Route::get('/edit_policy_management/{id}', [App\Http\Controllers\PolicyController::class, 'edit_policy_management'])->name('edit_policy_management');
+Route::post('/add_policy_management_submit', [App\Http\Controllers\PolicyController::class, 'add_policy_management_submit'])->name('add_policy_management_submit');
+Route::post('/update_policy_management_submit', [App\Http\Controllers\PolicyController::class, 'update_policy_management_submit'])->name('update_policy_management_submit');
+Route::get('/delete_policy_management/{id}', [App\Http\Controllers\PolicyController::class, 'delete_policy_management'])->name('delete_policy_management');
+Route::post('/delete_multi_policy_management', [App\Http\Controllers\PolicyController::class, 'delete_multi_policy_management'])->name('delete_multi_policy_management'); 
+Route::post('/get-subcategories', [App\Http\Controllers\PolicyController::class, 'getSubCategories'])->name('get-subcategories');
 
 ##############################  grade details#########################################
 
@@ -133,4 +165,15 @@ Route::post('/delete_multi_triptype', [App\Http\Controllers\TripController::clas
 
 ########################################################################################################
 Route::get('/view_user/{id}', [App\Http\Controllers\TripController::class, 'view_user'])->name('view_user');
+
+
+Route::get('/role-management', [App\Http\Controllers\RoleController::class, 'index'])->name('role-management');
+Route::get('/roleList', [App\Http\Controllers\RoleController::class, 'roleList'])->name('roleList');
+Route::get('/edit_role/{id}', [App\Http\Controllers\RoleController::class, 'edit_role'])->name('edit_role');
+Route::get('/delete_role/{id}', [App\Http\Controllers\RoleController::class, 'delete_role'])->name('delete_role');
+Route::get('/add_role', [App\Http\Controllers\RoleController::class, 'add_role'])->name('add_role');
+Route::post('/add_role_submit', [App\Http\Controllers\RoleController::class, 'add_role_submit'])->name('add_role_submit');
+Route::post('/edit_role_submit', [App\Http\Controllers\RoleController::class, 'edit_role_submit'])->name('edit_role_submit');
+Route::get('/search_role_user', [App\Http\Controllers\RoleController::class, 'search_role_user'])->name('search_role_user');
+Route::post('/delete_multi_role', [App\Http\Controllers\RoleController::class, 'delete_multi_role'])->name('delete_multi_role'); 
 

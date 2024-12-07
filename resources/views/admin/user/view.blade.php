@@ -18,17 +18,17 @@
   <div class="main-area">    
     <div class="claim-cover">
       <div class="back-btn" id="back-button">
-        <a href="#">
+        <a href="/list_users">
           <i class="fa fa-long-arrow-left" aria-hidden="true"></i> Back
         </a>
       </div>
       <div class="bg-cover">
         <table class="table">
-          <tr>
+          <!-- <tr>
             <th width="300">Customer ID</th>
             <td width="20">:</td>
             <td>{{$user->id}}</td>
-          </tr>
+          </tr> -->
           <tr>
             <th>Employee ID</th>
             <td>:</td>
@@ -41,11 +41,11 @@
             <td>{{$user->emp_name}}</td>
           </tr>
 
-          <tr>
+          <!-- <tr>
             <th>User name</th>
             <td>:</td>
             <td>{{$user->user_name}}</td>
-          </tr>
+          </tr> -->
 
           <tr>
             <th>Email</th>
@@ -77,7 +77,7 @@
           <tr>
             <th>Base location</th>
             <td>:</td>
-            <td>{{$user->emp_baselocation }}</td>
+            <td>{{$user->baselocationDetails->BranchName }}</td>
           </tr>
 
           <tr>
@@ -98,7 +98,7 @@
             <th>Reporting person</th>
             <td>:</td>
             <td>{{$user->reporting_person }}</td>
-          </tr>
+          </tr> 
          
         </table>
       </div>

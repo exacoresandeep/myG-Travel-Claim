@@ -6,33 +6,17 @@
 <meta name="description" content="">
 <meta name="author" content="">
 
-<title>Settled Claim :: MyG</title>
+<title>All Settled Claims :: MyG</title>
 <?php include("include/header.php");?>
 
 <div class="main-content">
   <?php include("include/menu-left.php");?>
   <div class="main-area">
-    <h2 class="main-heading">Settled Claim</h2>
+    <h2 class="main-heading">All Settled Claims</h2>
     <div class="dash-all">
       <div class="dash-table-all">        
         <div class="sort-block">
-          <div class="show-num">
-            <span>Show</span>
-            <select class="select">
-              <option>20</option>
-              <option>50</option>
-              <option>100</option>
-            </select>
-            <span>Entries</span>
-          </div> 
-          <a href="" class="btn btn-primary">Delete</a>
-          <div class="sort-by ml-auto">
-            <select class="select">
-              <option>Select</option>
-              <option>Sort by latest</option>
-              <option>Sort by oldest</option>
-            </select>
-          </div>
+          
         </div>
         <table class="table table-striped">
           <thead>            
@@ -48,30 +32,7 @@
             <th>Action</th>
           </thead>
           <tbody>
-            <tr>              
-              <td>01.</td>
-              <td>TID254680</td>
-              <td>01/05/2024</td>
-              <td>John/MYG45025</td>
-              <td>Calicut/MYGC001</td>
-              <td>01/05/2024-15/05/2024</td>
-              <td>Inaguration</td>
-              <td>20,000.00</td>
-              <td><a href="" class="btn btn-success">Completed</a></td>
-              <td><a href="" class="btn btn-primary"><i class="fa fa-eye" aria-hidden="true"></i> View</a></td>
-            </tr>
-            <tr>              
-              <td>02.</td>
-              <td>TID254680</td>
-              <td>01/05/2024</td>
-              <td>John/MYG45025</td>
-              <td>Calicut/MYGC001</td>
-              <td>01/05/2024-15/05/2024</td>
-              <td>Inaguration</td>
-              <td>20,000.00</td>
-              <td><a href="" class="btn btn-success">Completed</a></td>
-              <td><a href="" class="btn btn-primary"><i class="fa fa-eye" aria-hidden="true"></i> View</a></td>
-            </tr>
+            
           </tbody>
         </table>
         <div class="pagination-block">

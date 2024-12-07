@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Policy extends Model
 {
+    public function subCategoryDetails()
+    {
+        return $this->belongsTo(SubCategories::class, 'SubCategoryID','SubCategoryID');
+    }
     public $table="myg_06_policies";
     protected $fillable = [
         'PolicyID',
@@ -19,14 +23,14 @@ class Policy extends Model
         'Status',
         'user_id'
     ];
-
-
-    public function subCategoryDetails()
-    {
-        return $this->hasMany(SubCategories::class, 'SubCategoryID','SubCategoryID');
-    }
+  
     public function gradeDetails()
     {
         return $this->hasMany(Grades::class, 'GradeID','GradeID');
+    }
+    
+    public function viewgradeDetails()
+    {
+        return $this->belongsTo(Grades::class, 'GradeID', 'GradeID');
     }
 }

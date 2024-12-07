@@ -12,6 +12,11 @@
 <body>
     @include("admin.include.sidebar-menu")
     <div class="main-area">
+        <div class="back-btn" id="back-button">
+            <a href="{{ url('list_users') }}">
+            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> Back
+            </a>
+        </div>
         <h2 class="main-heading">Edit User</h2>
         <div class="dash-all pt-0">
             <div class="dash-table-all" style="max-width:700px;">
@@ -46,19 +51,7 @@
                             </td>
                         </tr>
 
-                        <tr>
-                            <td>User Name<span style="color: red;">*</span></td>
-                            <td width="10">:</td>
-                            <td>
-                                <input type="text" class="form-control @error('user_name') is-invalid @enderror" name="user_name" required autocomplete="off" value="{{$User->user_name}}" readonly="">
-                                @error('user_name')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </td>
-                        </tr>
-
+                        
                         <tr>
                             <td>Email <span style="color: red;">*</span></td>
                             <td width="10">:</td>
@@ -159,7 +152,7 @@
                                 <select class="form-control" name="reporting_person">
                                     <option value="">Select</option>
                                     @foreach($userData as $val)
-                                    <option value="{{$val->id}}" {{ $User->reporting_person == $val->id ? 'selected' : '' }}>{{$val->emp_name}}</option>
+                                    <option value="{{$val->emp_id}}" {{ $User->reporting_person == $val->id ? 'selected' : '' }}>{{$val->emp_name}}</option>
                                     @endforeach
                                 </select>
                                 

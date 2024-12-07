@@ -11,7 +11,21 @@ body {
   padding-bottom: 42px;
   height: 100%;
 }
+.card-header .card-link.active,
+.card-body a.active {
+    color: #E95815 !important;
+}
 
+.card-header .card-link.active i,
+.card-body a.active i {
+    color: #E95815 !important;
+}
+.table-striped{
+  width:100%;
+}
+.table{
+  width:100%;
+}
 .btn {
   font-size: 16px;
   padding: 10px 15px;
@@ -712,7 +726,7 @@ body {
 .category-section .card-header .btn-link span {
   display: inline-block;
   min-width: 370px;
-  font-size: ;
+  /* font-size: ; */
 }
 
 .category-section .card-header .btn-link:hover {

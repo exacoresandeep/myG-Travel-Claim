@@ -20,19 +20,19 @@
         <div class="dash-all">
             <div class="dash-table-all">        
                 <div class="sort-block">
-                    <a href="{{url('add_triptype')}}" class="button_orange">Add Trips</a>
+                    <a href="{{url('add_triptype')}}" class="btn btn-primary btn-search">Add Trips</a>
                 </div>
                 <table class="table table-striped triptype-datatable" id="triptype-datatable">
                     <thead>
                         <tr>
-                            <th width="10%">
+                            <th width="50px">
                                 <input type="checkbox" id="select-all">&nbsp;&nbsp;&nbsp;
                                 <button class="button_orange fa fa-trash" id="delete-selected"></button>
                             </th>
-                            <th width="100 px">Sl.</th>
-                            <th width="">Trip Types</th>
-                            <th width="120 px">Status</th>
-                            <th width="180 px">Action</th>
+                            <th width="60px">Sl.</th>
+                            <th width="200px">Trip Types</th>
+                            <th width="120px">Status</th>
+                            <th width="">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -45,19 +45,26 @@
 
     <!-- Include JavaScript -->
     <script type="text/javascript">
-        @if(session()->has('message'))
-        swal({
-            title: "Success!",
-            text: "{{ session()->get('message') }}",
-            icon: "success",
-        });
-        @endif
+        $(document).ready(function(){
+            @if(session()->has('message'))
+            Swal.fire({
+                title: "Success!",
+                text: "{{ session()->get('message') }}",
+                icon: "success",
+            }).then(function() {
+                    // Reload DataTable after SweetAlert confirmation
+                    $('#triptype-datatable').DataTable().ajax.reload();
+                });
+            @endif
         
-        $('#select-all').on('change', function() {
-            $('input[name="item_checkbox[]"]').prop('checked', $(this).prop('checked'));
-        });
+            $('#select-all').on('change', function() {
+                $('input[name="item_checkbox[]"]').prop('checked', $(this).prop('checked'));
+            });
         
-        $(function () {
+        // $(function () {
+            if ($.fn.DataTable.isDataTable('#category-datatable')) {
+                $('.triptype-datatable').DataTable().clear().destroy();
+            }
             var table = $('.triptype-datatable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -102,7 +109,7 @@
 
         function delete_triptype_modal(id) {
             var id = id; 
-            swal({
+            Swal.fire({
                 title: 'Are you sure?',
                 text: "Are you sure you want to delete this triptype?",
                 icon: 'warning',
@@ -117,14 +124,14 @@
                             "_token": "{{ csrf_token() }}",
                         },
                         success:function(data) {
-                            swal({
+                            Swal.fire({
                                 title: "Success!",
                                 text: "Triptype has been deleted!..",
                                 icon: "success",
+                            }).then(function() {
+                                // Reload DataTable after SweetAlert confirmation
+                                $('#triptype-datatable').DataTable().ajax.reload();
                             });
-                            setTimeout(function() {
-                                window.location.href = "{{url("trip_type_mgmt")}}";
-                            }, 2000);
                         }
                     });
                 }
@@ -142,7 +149,7 @@
                 return value !== undefined && value !== '';
             });
             if (ids.length > 0) {
-                swal({
+                Swal.fire({
                     title: 'Are you sure?',
                     text: "Are you sure you want to delete this triptype?",
                     icon: 'warning',
@@ -158,14 +165,14 @@
                                 _token: "{{ csrf_token() }}",
                             },
                             success: function(response) {
-                                swal({
+                                Swal.fire({
                                     title: "Success!",
                                     text: "Selected triptype have been deleted!",
                                     icon: "success",
+                                }).then(function() {
+                                    // Reload DataTable after SweetAlert confirmation
+                                    $('#triptype-datatable').DataTable().ajax.reload();
                                 });
-                                setTimeout(function() {
-                                    window.location.href = "{{url('trip_type_mgmt')}}";
-                                }, 2000);
                             },
                             error: function(xhr, status, error) {
                                 console.error(xhr.responseText);
@@ -178,7 +185,7 @@
                     }
                 });
             } else {
-                swal({
+                Swal.fire({
                     title: "Error!",
                     text: "No items selected.",
                     icon: "error",
